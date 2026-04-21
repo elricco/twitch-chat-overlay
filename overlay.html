@@ -17,6 +17,15 @@
       --overlay-width: 400px;
       --offset-x: 0px;
       --offset-y: 0px;
+      /* Per-element typography */
+      --name-font-family: var(--font-family);
+      --name-font-size: 13.5px;
+      --name-font-weight: 700;
+      --name-font-style: normal;
+      --msg-font-family: var(--font-family);
+      --msg-font-size: var(--font-size);
+      --msg-font-weight: 400;
+      --msg-font-style: normal;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -149,13 +158,19 @@
 
     /* ── Username ── */
     .username {
-      font-weight: 700;
-      font-size: calc(var(--font-size) * 0.9);
+      font-family: var(--name-font-family);
+      font-size: var(--name-font-size);
+      font-weight: var(--name-font-weight);
+      font-style: var(--name-font-style);
       letter-spacing: 0.01em;
     }
 
     /* ── Message text ── */
     .message-text {
+      font-family: var(--msg-font-family);
+      font-size: var(--msg-font-size);
+      font-weight: var(--msg-font-weight);
+      font-style: var(--msg-font-style);
       line-height: 1.5;
     }
 

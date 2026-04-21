@@ -22,6 +22,14 @@ const CONFIG = (() => {
     cornerRadius:     getNum('cornerRadius', 8),
     fontSize:         getNum('fontSize', 15),
     fontFamily:       get('fontFamily', 'Inter, sans-serif'),
+    // Name typography
+    nameFontFamily:   get('nameFontFamily', ''),
+    nameFontSize:     getNum('nameFontSize', 13),
+    nameFontWeight:   get('nameFontWeight', '700'),   // may encode italic: "700italic"
+    // Message typography
+    msgFontFamily:    get('msgFontFamily', ''),
+    msgFontSize:      getNum('msgFontSize', 15),
+    msgFontWeight:    get('msgFontWeight', '400'),    // may encode italic: "400italic"
     bgColor:          get('bgColor', '00000080'),
     textColor:        get('textColor', 'ffffff'),
     nameShadow:       getBool('nameShadow', true),
@@ -45,6 +53,33 @@ const CONFIG = (() => {
 })();
 
 // ─── Apply CSS variables from config ────────────────────────
+// ─── Dynamic Google Fonts loader ─────────────────────────────
+const SYSTEM_FONTS = new Set(['Arial','Helvetica','Georgia','Verdana','Tahoma',
+  'sans-serif','serif','monospace','cursive','fantasy','system-ui']);
+
+function loadGoogleFonts(...cssFamilies) {
+  const names = new Set();
+  for (const raw of cssFamilies) {
+    const name = (raw || '').split(',')[0].trim().replace(/['"]/g, '');
+    if (name && !SYSTEM_FONTS.has(name)) names.add(name);
+  }
+  if (!names.size) return;
+
+  const families = [...names]
+    .map(n => 'family=' + encodeURIComponent(n) + ':ital,wght@0,400;0,700;1,400;1,700')
+    .join('&');
+  const href = 'https://fonts.googleapis.com/css2?' + families + '&display=swap';
+
+  let link = document.getElementById('gfont-link');
+  if (!link) {
+    link = document.createElement('link');
+    link.id = 'gfont-link';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }
+  if (link.href !== href) link.href = href;
+}
+
 function applyConfig() {
   const root = document.documentElement;
   root.style.setProperty('--corner-radius', CONFIG.cornerRadius + 'px');
@@ -57,6 +92,26 @@ function applyConfig() {
   root.style.setProperty('--overlay-width', CONFIG.width + 'px');
   root.style.setProperty('--offset-x', CONFIG.offsetX + 'px');
   root.style.setProperty('--offset-y', CONFIG.offsetY + 'px');
+  // Per-element typography
+  const parseVariant = (raw) => ({
+    weight: raw.replace('italic', '').trim() || '400',
+    style:  raw.includes('italic') ? 'italic' : 'normal',
+  });
+  const nameV = parseVariant(CONFIG.nameFontWeight);
+  const msgV  = parseVariant(CONFIG.msgFontWeight);
+  const nameFam = CONFIG.nameFontFamily || CONFIG.fontFamily;
+  const msgFam  = CONFIG.msgFontFamily  || CONFIG.fontFamily;
+  root.style.setProperty('--name-font-family', nameFam);
+  root.style.setProperty('--name-font-size', CONFIG.nameFontSize + 'px');
+  root.style.setProperty('--name-font-weight', nameV.weight);
+  root.style.setProperty('--name-font-style', nameV.style);
+  root.style.setProperty('--msg-font-family', msgFam);
+  root.style.setProperty('--msg-font-size', CONFIG.msgFontSize + 'px');
+  root.style.setProperty('--msg-font-weight', msgV.weight);
+  root.style.setProperty('--msg-font-style', msgV.style);
+
+  // Load Google Fonts for all active font families
+  loadGoogleFonts(CONFIG.fontFamily, nameFam, msgFam);
 
   const container = document.getElementById('chat-container');
   if (container) {

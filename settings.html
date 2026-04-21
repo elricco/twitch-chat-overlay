@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Twitch Overlay – Einstellungen</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syne:wght@400;600;800&family=Inter:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&family=Nunito:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Poppins:ital,wght@0,400;0,700;1,400;1,700&family=Rubik:ital,wght@0,400;0,700;1,400;1,700&family=Raleway:ital,wght@0,400;0,700;1,400;1,700&family=Exo+2:ital,wght@0,400;0,700;1,400;1,700&family=Orbitron:wght@400;700&family=Fredoka:wght@400;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&family=Comic+Neue:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
     :root {
       --bg: #0d0d0f;
@@ -77,6 +77,15 @@
       margin-bottom: 20px;
       padding-bottom: 12px;
       border-bottom: 1px solid var(--border);
+    }
+
+    .subsection-label {
+      font-size: 0.65rem;
+      font-family: 'Space Mono', monospace;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      pointer-events: none;
     }
 
     .field {
@@ -430,25 +439,85 @@
       <input type="range" id="cornerRadius" min="0" max="32" step="1" value="8" oninput="update()">
     </div>
 
+    <!-- Name typography -->
     <div class="field">
-      <label>
-        Schriftgröße
-        <span class="value-badge" id="lbl-fontSize">15px</span>
-      </label>
-      <input type="range" id="fontSize" min="10" max="28" step="1" value="15" oninput="update()">
+      <label class="subsection-label">// Benutzername</label>
     </div>
-
     <div class="field">
-      <label>Schriftart</label>
-      <select id="fontFamily" onchange="update()">
+      <label>Schriftart (Name)</label>
+      <select id="nameFontFamily" onchange="update()">
         <option value="Inter, sans-serif">Inter</option>
-        <option value="'Syne', sans-serif">Syne</option>
-        <option value="'Space Mono', monospace">Space Mono</option>
         <option value="'Roboto', sans-serif">Roboto</option>
         <option value="'Nunito', sans-serif">Nunito</option>
         <option value="'DM Sans', sans-serif">DM Sans</option>
-        <option value="Arial, sans-serif">Arial</option>
+        <option value="'Poppins', sans-serif">Poppins</option>
+        <option value="'Rubik', sans-serif">Rubik</option>
+        <option value="'Raleway', sans-serif">Raleway</option>
+        <option value="'Exo 2', sans-serif">Exo 2</option>
+        <option value="'Orbitron', sans-serif">Orbitron</option>
+        <option value="'Fredoka', cursive">Fredoka</option>
+        <option value="'Syne', sans-serif">Syne</option>
+        <option value="'Space Mono', monospace">Space Mono</option>
+        <option value="'Source Code Pro', monospace">Source Code Pro</option>
         <option value="'Comic Neue', cursive">Comic Neue</option>
+        <option value="Arial, sans-serif">Arial</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>
+        Schriftgröße (Name)
+        <span class="value-badge" id="lbl-nameFontSize">13px</span>
+      </label>
+      <input type="range" id="nameFontSize" min="8" max="28" step="1" value="13" oninput="update()">
+    </div>
+    <div class="field">
+      <label>Schriftschnitt (Name)</label>
+      <select id="nameFontWeight" onchange="update()">
+        <option value="400">Normal</option>
+        <option value="700" selected>Fett</option>
+        <option value="400italic">Kursiv</option>
+        <option value="700italic">Fett + Kursiv</option>
+      </select>
+    </div>
+
+    <!-- Message typography -->
+    <div class="field">
+      <label class="subsection-label">// Nachricht</label>
+    </div>
+    <div class="field">
+      <label>Schriftart (Nachricht)</label>
+      <select id="msgFontFamily" onchange="update()">
+        <option value="Inter, sans-serif">Inter</option>
+        <option value="'Roboto', sans-serif">Roboto</option>
+        <option value="'Nunito', sans-serif">Nunito</option>
+        <option value="'DM Sans', sans-serif">DM Sans</option>
+        <option value="'Poppins', sans-serif">Poppins</option>
+        <option value="'Rubik', sans-serif">Rubik</option>
+        <option value="'Raleway', sans-serif">Raleway</option>
+        <option value="'Exo 2', sans-serif">Exo 2</option>
+        <option value="'Orbitron', sans-serif">Orbitron</option>
+        <option value="'Fredoka', cursive">Fredoka</option>
+        <option value="'Syne', sans-serif">Syne</option>
+        <option value="'Space Mono', monospace">Space Mono</option>
+        <option value="'Source Code Pro', monospace">Source Code Pro</option>
+        <option value="'Comic Neue', cursive">Comic Neue</option>
+        <option value="Arial, sans-serif">Arial</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>
+        Schriftgröße (Nachricht)
+        <span class="value-badge" id="lbl-msgFontSize">15px</span>
+      </label>
+      <input type="range" id="msgFontSize" min="8" max="32" step="1" value="15" oninput="update()">
+    </div>
+    <div class="field">
+      <label>Schriftschnitt (Nachricht)</label>
+      <select id="msgFontWeight" onchange="update()">
+        <option value="400" selected>Normal</option>
+        <option value="700">Fett</option>
+        <option value="400italic">Kursiv</option>
+        <option value="700italic">Fett + Kursiv</option>
       </select>
     </div>
 
@@ -603,6 +672,8 @@
     channel: '', delay: 5, maxMessages: 20,
     offsetX: 0, offsetY: 0, width: 400, messageGap: 6,
     cornerRadius: 8, fontSize: 15, fontFamily: 'Inter, sans-serif',
+    nameFontFamily: 'Inter, sans-serif', nameFontSize: 13, nameFontWeight: '700',
+    msgFontFamily: 'Inter, sans-serif', msgFontSize: 15, msgFontWeight: '400',
     bgColor: '00000080', textColor: 'ffffff',
     showAvatar: true, avatarSize: 36, showBadges: true, nameShadow: true,
     animation: 'slide', bttv: true, sevenTv: true,
@@ -635,6 +706,8 @@
     cornerRadius: v => v + 'px',
     fontSize: v => v + 'px',
     avatarSize: v => v + 'px',
+    nameFontSize: v => v + 'px',
+    msgFontSize: v => v + 'px',
   };
 
   function updateLabels() {
@@ -689,14 +762,26 @@
     ];
 
     const cr = get('cornerRadius') + 'px';
-    const fs = get('fontSize') + 'px';
     const bg = hexAlphaToRgba(get('bgColor') || '00000080');
     const tc = '#' + (get('textColor') || 'ffffff');
-    const ff = get('fontFamily');
     const showAv = get('showAvatar');
     const avSize = get('avatarSize') + 'px';
     const gap = get('messageGap') + 'px';
     const width = get('width') + 'px';
+
+    // Name typography
+    const nameFontFamily = get('nameFontFamily');
+    const nameFontSize = get('nameFontSize') + 'px';
+    const nameWeightRaw = get('nameFontWeight');
+    const nameFontWeight = nameWeightRaw.replace('italic','').trim() || '400';
+    const nameFontStyle = nameWeightRaw.includes('italic') ? 'italic' : 'normal';
+
+    // Message typography
+    const msgFontFamily = get('msgFontFamily');
+    const msgFontSize = get('msgFontSize') + 'px';
+    const msgWeightRaw = get('msgFontWeight');
+    const msgFontWeight = msgWeightRaw.replace('italic','').trim() || '400';
+    const msgFontStyle = msgWeightRaw.includes('italic') ? 'italic' : 'normal';
 
     const chat = document.getElementById('preview-chat');
     chat.style.gap = gap;
@@ -711,8 +796,6 @@
     msgs.forEach((el, i) => {
       el.style.background = bg;
       el.style.borderRadius = cr;
-      el.style.fontSize = fs;
-      el.style.fontFamily = ff;
       el.style.color = tc;
 
       avs[i].style.display = showAv ? 'block' : 'none';
@@ -721,6 +804,20 @@
       if (!avs[i].src || avs[i].src.endsWith('/')) {
         avs[i].src = avatarPlaceholders[i];
       }
+    });
+
+    document.querySelectorAll('.preview-name').forEach(el => {
+      el.style.fontFamily = nameFontFamily;
+      el.style.fontSize = nameFontSize;
+      el.style.fontWeight = nameFontWeight;
+      el.style.fontStyle = nameFontStyle;
+    });
+    document.querySelectorAll('.preview-text').forEach(el => {
+      el.style.fontFamily = msgFontFamily;
+      el.style.fontSize = msgFontSize;
+      el.style.fontWeight = msgFontWeight;
+      el.style.fontStyle = msgFontStyle;
+      el.style.color = tc;
     });
   }
 
@@ -739,9 +836,9 @@
 
     params.set('channel', channel);
 
-    const numFields = ['delay','maxMessages','offsetX','offsetY','width','messageGap','cornerRadius','fontSize','avatarSize'];
+    const numFields = ['delay','maxMessages','offsetX','offsetY','width','messageGap','cornerRadius','fontSize','avatarSize','nameFontSize','msgFontSize'];
     const boolFields = ['showAvatar','showBadges','nameShadow','bttv','sevenTv'];
-    const strFields = ['fontFamily','bgColor','textColor','animation','blocklist'];
+    const strFields = ['fontFamily','bgColor','textColor','animation','blocklist','nameFontFamily','nameFontWeight','msgFontFamily','msgFontWeight'];
 
     for (const f of numFields) params.set(f, get(f));
     for (const f of boolFields) params.set(f, get(f));
