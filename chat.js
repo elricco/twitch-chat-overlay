@@ -37,6 +37,10 @@ const CONFIG = (() => {
     sevenTv:          getBool('sevenTv', true),
     // Deleted messages
     hideDeleted:      getBool('hideDeleted', true),
+    blocklist:        new Set(
+      get('blocklist', 'streamelements,streamlabs,nightbot,moobot,fossabot,wizebot,botrix')
+        .split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
+    ),
   };
 })();
 
@@ -430,6 +434,8 @@ function handleIRC(line) {
     const colonIdx = rest.indexOf(' :');
     const message = colonIdx !== -1 ? rest.slice(colonIdx + 2) : '';
     const username = prefix.split('!')[0];
+
+    if (CONFIG.blocklist.has(username.toLowerCase())) return;
 
     const msgObj = {
       id: tags['id'] || Math.random().toString(36).slice(2),

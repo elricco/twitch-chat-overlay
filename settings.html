@@ -361,6 +361,12 @@
       </label>
       <input type="range" id="maxMessages" min="1" max="50" step="1" value="20" oninput="update()">
     </div>
+
+    <div class="field">
+      <label>Blockierte Accounts</label>
+      <input type="text" id="blocklist" placeholder="bot1,bot2,bot3" oninput="update()">
+      <div class="opacity-hint">Kommagetrennte Usernamen (Bots, unerwünschte Accounts)</div>
+    </div>
   </div>
 
   <!-- Layout -->
@@ -588,6 +594,7 @@
     bgColor: '00000080', textColor: 'ffffff',
     showAvatar: true, avatarSize: 36, showBadges: true, nameShadow: true,
     animation: 'slide', bttv: true, sevenTv: true,
+    blocklist: 'streamelements,streamlabs,nightbot,moobot,fossabot,wizebot,botrix',
   };
 
   function get(id) {
@@ -721,7 +728,7 @@
 
     const numFields = ['delay','maxMessages','offsetX','offsetY','width','messageGap','cornerRadius','fontSize','avatarSize'];
     const boolFields = ['showAvatar','showBadges','nameShadow','bttv','sevenTv'];
-    const strFields = ['fontFamily','bgColor','textColor','animation'];
+    const strFields = ['fontFamily','bgColor','textColor','animation','blocklist'];
 
     for (const f of numFields) params.set(f, get(f));
     for (const f of boolFields) params.set(f, get(f));
