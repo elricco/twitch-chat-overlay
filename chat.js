@@ -89,14 +89,14 @@ async function load7TV(channelId) {
     // Global 7TV emotes
     const global = await fetch('https://7tv.io/v3/emote-sets/global').then(r => r.json());
     for (const e of (global.emotes || [])) {
-      const url = e.data?.host?.url + '/2x.webp';
+      const url = 'https:' + e.data?.host?.url + '/2x.webp';
       EMOTES.seventv[e.name] = url;
     }
     // Channel 7TV emotes
     if (channelId) {
       const ch = await fetch(`https://7tv.io/v3/users/twitch/${channelId}`).then(r => r.json());
       for (const e of (ch.emote_set?.emotes || [])) {
-        const url = e.data?.host?.url + '/2x.webp';
+        const url = 'https:' + e.data?.host?.url + '/2x.webp';
         EMOTES.seventv[e.name] = url;
       }
     }
@@ -104,14 +104,14 @@ async function load7TV(channelId) {
 }
 
 async function resolveTwitchUserId(channel) {
-  // Anonymous lookup via Twitch's undocumented GQL or just skip for anon
-  // We skip OAuth here; BTTV/7TV can also be loaded by username on some endpoints
   try {
-    // Try BTTV search by name as fallback
-    const r = await fetch(`https://api.betterttv.net/3/cached/users/twitch/0`);
-    // This will fail for 0, but the pattern works for real IDs
+    const r = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${encodeURIComponent(channel)}`);
+    if (r.ok) {
+      const data = await r.json();
+      return (Array.isArray(data) ? data[0]?.id : data?.id) || null;
+    }
   } catch (_) {}
-  return null; // Without OAuth we can't resolve ID; global emotes still load
+  return null;
 }
 
 // ─── Message Queue ────────────────────────────────────────────
@@ -501,10 +501,12 @@ async function init() {
     return;
   }
 
-  // Load emotes (global always, channel if ID known)
+  // Resolve channel ID for BTTV/7TV channel emotes (uses IVR.fi, no OAuth needed)
+  const channelId = await resolveTwitchUserId(CONFIG.channel);
+
   const promises = [];
-  if (CONFIG.bttv) promises.push(loadBTTV(null));
-  if (CONFIG.sevenTv) promises.push(load7TV(null));
+  if (CONFIG.bttv) promises.push(loadBTTV(channelId));
+  if (CONFIG.sevenTv) promises.push(load7TV(channelId));
   await Promise.allSettled(promises);
 
   connect();
