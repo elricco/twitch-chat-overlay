@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Twitch Chat Overlay</title>
+  <style>
+    /* ── CSS Variables (overridden by chat.js) ── */
+    :root {
+      --corner-radius: 8px;
+      --font-size: 15px;
+      --font-family: 'Inter', sans-serif;
+      --bg-color: #00000080;
+      --text-color: #ffffff;
+      --avatar-size: 36px;
+      --msg-gap: 6px;
+      --overlay-width: 400px;
+      --offset-x: 0px;
+      --offset-y: 0px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    /* ── Outer wrapper: positions the chat column ── */
+    #chat-wrapper {
+      position: fixed;
+      bottom: var(--offset-y);
+      left: var(--offset-x);
+      width: var(--overlay-width);
+      max-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      pointer-events: none;
+      padding: 8px;
+    }
+
+    /* ── Chat container ── */
+    #chat-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--msg-gap);
+      width: 100%;
+    }
+
+    /* ── Individual message ── */
+    .chat-message {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: var(--bg-color);
+      border-radius: var(--corner-radius);
+      padding: 6px 10px;
+      font-family: var(--font-family);
+      font-size: var(--font-size);
+      color: var(--text-color);
+      line-height: 1.4;
+      word-break: break-word;
+      /* Default: invisible for animation */
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    /* ── Animations ── */
+
+    /* slide (default) */
+    #chat-container[data-animation="slide"] .chat-message {
+      transform: translateX(-16px);
+    }
+    #chat-container[data-animation="slide"] .chat-message.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* fade */
+    #chat-container[data-animation="fade"] .chat-message {
+      transform: none;
+    }
+    #chat-container[data-animation="fade"] .chat-message.visible {
+      opacity: 1;
+    }
+
+    /* pop */
+    #chat-container[data-animation="pop"] .chat-message {
+      transform: scale(0.85);
+    }
+    #chat-container[data-animation="pop"] .chat-message.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* none */
+    #chat-container[data-animation="none"] .chat-message {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* removing */
+    .chat-message.removing {
+      opacity: 0 !important;
+      transform: scale(0.95) !important;
+      pointer-events: none;
+    }
+
+    /* ── Avatar ── */
+    .avatar {
+      width: var(--avatar-size);
+      height: var(--avatar-size);
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      margin-top: 2px;
+      background: #2a2a2a;
+    }
+
+    /* ── Message body ── */
+    .message-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-bottom: 2px;
+    }
+
+    /* ── Badges ── */
+    .badges {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .badge {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      vertical-align: middle;
+    }
+
+    /* ── Username ── */
+    .username {
+      font-weight: 700;
+      font-size: calc(var(--font-size) * 0.9);
+      letter-spacing: 0.01em;
+    }
+
+    /* ── Message text ── */
+    .message-text {
+      line-height: 1.5;
+    }
+
+    /* ── Emotes ── */
+    .emote {
+      height: calc(var(--font-size) * 2);
+      width: auto;
+      vertical-align: middle;
+      display: inline-block;
+      margin: 0 1px;
+    }
+
+    /* ── Error notice ── */
+    #error-notice {
+      display: none;
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(220, 50, 50, 0.9);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-family: sans-serif;
+      font-size: 13px;
+      max-width: 90%;
+      text-align: center;
+      z-index: 999;
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+  <div id="chat-wrapper">
+    <div id="chat-container" data-animation="slide"></div>
+  </div>
+  <div id="error-notice"></div>
+  <script src="chat.js"></script>
+</body>
+</html>

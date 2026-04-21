@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Twitch Overlay – Einstellungen</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap');
+
+    :root {
+      --bg: #0d0d0f;
+      --surface: #16161a;
+      --surface2: #1e1e24;
+      --border: #2a2a35;
+      --accent: #9b5de5;
+      --accent2: #f15bb5;
+      --green: #00f5d4;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+      --radius: 12px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      padding: 40px 24px;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .page-header h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+    .page-header p {
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      margin-top: 8px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 720px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .card-title {
+      font-size: 0.7rem;
+      font-family: 'Space Mono', monospace;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    label .value-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--green);
+      font-weight: 400;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--accent);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    /* Toggle switch */
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .toggle-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .toggle input { display: none; }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 99px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle input:checked + .toggle-track { background: var(--accent); }
+    .toggle input:checked + .toggle-track::after { transform: translateX(20px); }
+
+    /* Color input */
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .color-row input[type="color"] {
+      width: 48px;
+      height: 38px;
+      padding: 2px 4px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface2);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .color-row input[type="text"] {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+    }
+    .opacity-hint {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 4px;
+      font-family: 'Space Mono', monospace;
+    }
+
+    /* Output section */
+    .output-section {
+      max-width: 1000px;
+      margin: 24px auto 0;
+    }
+
+    .url-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+    }
+    .url-box h2 {
+      font-size: 0.7rem;
+      font-family: 'Space Mono', monospace;
+      color: var(--accent2);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .url-display {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--green);
+      word-break: break-all;
+      margin-bottom: 14px;
+      min-height: 48px;
+      line-height: 1.6;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    button:hover { opacity: 0.85; }
+    button:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      font-weight: 700;
+    }
+    .btn-secondary {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    /* Preview */
+    .preview-card {
+      max-width: 1000px;
+      margin: 24px auto 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+    .preview-card h2 {
+      font-size: 0.7rem;
+      font-family: 'Space Mono', monospace;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    #preview-frame-wrapper {
+      background: repeating-linear-gradient(
+        45deg,
+        #1a1a1a 0px, #1a1a1a 10px,
+        #141414 10px, #141414 20px
+      );
+      border-radius: 8px;
+      padding: 20px;
+      min-height: 200px;
+      display: flex;
+      align-items: flex-end;
+    }
+    #preview-chat {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 400px;
+    }
+    .preview-msg {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 6px 10px;
+      line-height: 1.4;
+      word-break: break-word;
+      font-size: 15px;
+    }
+    .preview-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .preview-body { flex: 1; min-width: 0; }
+    .preview-name { font-weight: 700; font-size: 13.5px; }
+    .preview-text { margin-top: 2px; font-size: 15px; color: #e8e8f0; }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--green);
+      color: #000;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 700;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Twitch Chat Overlay</h1>
+  <p>// configure · copy url · drop into obs</p>
+</div>
+
+<div class="layout">
+
+  <!-- Verbindung -->
+  <div class="card">
+    <div class="card-title">// Verbindung</div>
+
+    <div class="field">
+      <label>Channel-Name</label>
+      <input type="text" id="channel" placeholder="z.B. xqc" oninput="update()">
+    </div>
+
+    <div class="field">
+      <label>
+        Nachrichten-Verzögerung
+        <span class="value-badge" id="lbl-delay">5s</span>
+      </label>
+      <input type="range" id="delay" min="0" max="30" step="1" value="5" oninput="update()">
+    </div>
+
+    <div class="field">
+      <label>
+        Max. Nachrichten
+        <span class="value-badge" id="lbl-maxMessages">20</span>
+      </label>
+      <input type="range" id="maxMessages" min="1" max="50" step="1" value="20" oninput="update()">
+    </div>
+  </div>
+
+  <!-- Layout -->
+  <div class="card">
+    <div class="card-title">// Layout & Versatz</div>
+
+    <div class="field">
+      <label>
+        Breite
+        <span class="value-badge" id="lbl-width">400px</span>
+      </label>
+      <input type="range" id="width" min="200" max="800" step="10" value="400" oninput="update()">
+    </div>
+
+    <div class="field">
+      <label>
+        Versatz X (links/rechts)
+        <span class="value-badge" id="lbl-offsetX">0px</span>
+      </label>
+      <input type="range" id="offsetX" min="0" max="1920" step="4" value="0" oninput="update()">
+    </div>
+
+    <div class="field">
+      <label>
+        Versatz Y (unten)
+        <span class="value-badge" id="lbl-offsetY">0px</span>
+      </label>
+      <input type="range" id="offsetY" min="0" max="1080" step="4" value="0" oninput="update()">
+    </div>
+
+    <div class="field">
+      <label>
+        Nachrichten-Abstand
+        <span class="value-badge" id="lbl-messageGap">6px</span>
+      </label>
+      <input type="range" id="messageGap" min="0" max="24" step="1" value="6" oninput="update()">
+    </div>
+  </div>
+
+  <!-- Design -->
+  <div class="card">
+    <div class="card-title">// Design</div>
+
+    <div class="field">
+      <label>
+        Corner Radius
+        <span class="value-badge" id="lbl-cornerRadius">8px</span>
+      </label>
+      <input type="range" id="cornerRadius" min="0" max="32" step="1" value="8" oninput="update()">
+    </div>
+
+    <div class="field">
+      <label>
+        Schriftgröße
+        <span class="value-badge" id="lbl-fontSize">15px</span>
+      </label>
+      <input type="range" id="fontSize" min="10" max="28" step="1" value="15" oninput="update()">
+    </div>
+
+    <div class="field">
+      <label>Schriftart</label>
+      <select id="fontFamily" onchange="update()">
+        <option value="Inter, sans-serif">Inter</option>
+        <option value="'Syne', sans-serif">Syne</option>
+        <option value="'Space Mono', monospace">Space Mono</option>
+        <option value="'Roboto', sans-serif">Roboto</option>
+        <option value="'Nunito', sans-serif">Nunito</option>
+        <option value="'DM Sans', sans-serif">DM Sans</option>
+        <option value="Arial, sans-serif">Arial</option>
+        <option value="'Comic Neue', cursive">Comic Neue</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Hintergrundfarbe</label>
+      <div class="color-row">
+        <input type="color" id="bgColorPicker" value="#000000" oninput="syncColor('bg')">
+        <input type="text" id="bgColor" value="00000080" placeholder="RRGGBBAA" oninput="syncColorFromText('bg'); update()">
+      </div>
+      <div class="opacity-hint">Format: RRGGBBAA – letzten 2 Stellen = Transparenz (00=unsichtbar, ff=opak)</div>
+    </div>
+
+    <div class="field">
+      <label>Textfarbe</label>
+      <div class="color-row">
+        <input type="color" id="textColorPicker" value="#ffffff" oninput="syncColor('text')">
+        <input type="text" id="textColor" value="ffffff" placeholder="RRGGBB" oninput="update()">
+      </div>
+    </div>
+  </div>
+
+  <!-- Avatar & Badges -->
+  <div class="card">
+    <div class="card-title">// Avatar & Badges</div>
+
+    <div class="field">
+      <div class="toggle-row">
+        <span class="toggle-label">Avatar anzeigen</span>
+        <label class="toggle">
+          <input type="checkbox" id="showAvatar" checked onchange="update()">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>
+        Avatar-Größe
+        <span class="value-badge" id="lbl-avatarSize">36px</span>
+      </label>
+      <input type="range" id="avatarSize" min="20" max="64" step="2" value="36" oninput="update()">
+    </div>
+
+    <div class="field">
+      <div class="toggle-row">
+        <span class="toggle-label">Badges anzeigen</span>
+        <label class="toggle">
+          <input type="checkbox" id="showBadges" checked onchange="update()">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="toggle-row">
+        <span class="toggle-label">Namen-Glow</span>
+        <label class="toggle">
+          <input type="checkbox" id="nameShadow" checked onchange="update()">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card-title" style="margin-top:20px;">// Emotes</div>
+
+    <div class="field">
+      <div class="toggle-row">
+        <span class="toggle-label">BetterTTV (BTTV)</span>
+        <label class="toggle">
+          <input type="checkbox" id="bttv" checked onchange="update()">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="toggle-row">
+        <span class="toggle-label">7TV</span>
+        <label class="toggle">
+          <input type="checkbox" id="sevenTv" checked onchange="update()">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Animation -->
+  <div class="card">
+    <div class="card-title">// Animation</div>
+
+    <div class="field">
+      <label>Einblend-Animation</label>
+      <select id="animation" onchange="update()">
+        <option value="slide">Slide (von links)</option>
+        <option value="fade">Fade (einblenden)</option>
+        <option value="pop">Pop (aufploppen)</option>
+        <option value="none">Keine Animation</option>
+      </select>
+    </div>
+  </div>
+
+</div>
+
+<!-- URL Output -->
+<div class="output-section">
+  <div class="url-box">
+    <h2>// OBS Browser Source URL</h2>
+    <div class="url-display" id="url-output">Gib einen Channel-Namen ein…</div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="copyUrl()">📋 URL kopieren</button>
+      <button class="btn-secondary" onclick="openPreviewWindow()">🖥 Overlay öffnen</button>
+      <button class="btn-secondary" onclick="resetAll()">↺ Zurücksetzen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Live Preview -->
+<div class="preview-card">
+  <h2>// Live-Vorschau</h2>
+  <div id="preview-frame-wrapper">
+    <div id="preview-chat">
+      <div class="preview-msg" id="prev1">
+        <img class="preview-avatar" id="prev-av1" src="" alt="">
+        <div class="preview-body">
+          <div class="preview-name" style="color:#9b5de5">StreamerFan99</div>
+          <div class="preview-text">Dieses Overlay sieht mega aus Pog</div>
+        </div>
+      </div>
+      <div class="preview-msg" id="prev2">
+        <img class="preview-avatar" id="prev-av2" src="" alt="">
+        <div class="preview-body">
+          <div class="preview-name" style="color:#f15bb5">CoolViewer</div>
+          <div class="preview-text">LUL ja richtig nice!!</div>
+        </div>
+      </div>
+      <div class="preview-msg" id="prev3">
+        <img class="preview-avatar" id="prev-av3" src="" alt="">
+        <div class="preview-body">
+          <div class="preview-name" style="color:#00f5d4">TwitchNerd</div>
+          <div class="preview-text">Wann kommt der nächste Stream? 👀</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ Kopiert!</div>
+
+<script>
+  // ── State ──────────────────────────────────────────
+  const DEFAULTS = {
+    channel: '', delay: 5, maxMessages: 20,
+    offsetX: 0, offsetY: 0, width: 400, messageGap: 6,
+    cornerRadius: 8, fontSize: 15, fontFamily: 'Inter, sans-serif',
+    bgColor: '00000080', textColor: 'ffffff',
+    showAvatar: true, avatarSize: 36, showBadges: true, nameShadow: true,
+    animation: 'slide', bttv: true, sevenTv: true,
+  };
+
+  function get(id) {
+    const el = document.getElementById(id);
+    if (!el) return DEFAULTS[id];
+    if (el.type === 'checkbox') return el.checked;
+    return el.value;
+  }
+
+  function update() {
+    updateLabels();
+    updatePreview();
+    generateUrl();
+    saveState();
+  }
+
+  // ── Labels ─────────────────────────────────────────
+  const LABELS = {
+    delay: v => v + 's',
+    maxMessages: v => v,
+    width: v => v + 'px',
+    offsetX: v => v + 'px',
+    offsetY: v => v + 'px',
+    messageGap: v => v + 'px',
+    cornerRadius: v => v + 'px',
+    fontSize: v => v + 'px',
+    avatarSize: v => v + 'px',
+  };
+
+  function updateLabels() {
+    for (const [key, fmt] of Object.entries(LABELS)) {
+      const lbl = document.getElementById('lbl-' + key);
+      const inp = document.getElementById(key);
+      if (lbl && inp) lbl.textContent = fmt(inp.value);
+    }
+  }
+
+  // ── Color sync ─────────────────────────────────────
+  function hexToPickerColor(hex8) {
+    return '#' + hex8.slice(0, 6);
+  }
+  function syncColor(which) {
+    const picker = document.getElementById(which + 'ColorPicker');
+    const text = document.getElementById(which + 'Color');
+    const hex = picker.value.replace('#', '');
+    if (which === 'bg') {
+      const alpha = text.value.slice(6) || 'ff';
+      text.value = hex + alpha;
+    } else {
+      text.value = hex;
+    }
+    update();
+  }
+  function syncColorFromText(which) {
+    const picker = document.getElementById(which + 'ColorPicker');
+    const text = document.getElementById(which + 'Color');
+    picker.value = '#' + text.value.slice(0, 6);
+  }
+
+  // ── Preview ────────────────────────────────────────
+  function hexAlphaToRgba(hex8) {
+    const r = parseInt(hex8.slice(0,2),16);
+    const g = parseInt(hex8.slice(2,4),16);
+    const b = parseInt(hex8.slice(4,6),16);
+    const a = hex8.length >= 8 ? parseInt(hex8.slice(6,8),16)/255 : 1;
+    return `rgba(${r},${g},${b},${a.toFixed(2)})`;
+  }
+
+  function updatePreview() {
+    const msgs = [
+      document.getElementById('prev1'),
+      document.getElementById('prev2'),
+      document.getElementById('prev3'),
+    ];
+    const avs = [
+      document.getElementById('prev-av1'),
+      document.getElementById('prev-av2'),
+      document.getElementById('prev-av3'),
+    ];
+
+    const cr = get('cornerRadius') + 'px';
+    const fs = get('fontSize') + 'px';
+    const bg = hexAlphaToRgba(get('bgColor') || '00000080');
+    const tc = '#' + (get('textColor') || 'ffffff');
+    const ff = get('fontFamily');
+    const showAv = get('showAvatar');
+    const avSize = get('avatarSize') + 'px';
+    const gap = get('messageGap') + 'px';
+    const width = get('width') + 'px';
+
+    const chat = document.getElementById('preview-chat');
+    chat.style.gap = gap;
+    chat.style.width = width;
+
+    const avatarPlaceholders = [
+      'https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png',
+      'https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png',
+      'https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png',
+    ];
+
+    msgs.forEach((el, i) => {
+      el.style.background = bg;
+      el.style.borderRadius = cr;
+      el.style.fontSize = fs;
+      el.style.fontFamily = ff;
+      el.style.color = tc;
+
+      avs[i].style.display = showAv ? 'block' : 'none';
+      avs[i].style.width = avSize;
+      avs[i].style.height = avSize;
+      if (!avs[i].src || avs[i].src.endsWith('/')) {
+        avs[i].src = avatarPlaceholders[i];
+      }
+    });
+  }
+
+  // ── URL generation ─────────────────────────────────
+  function generateUrl() {
+    const channel = get('channel').trim();
+    const out = document.getElementById('url-output');
+
+    if (!channel) {
+      out.textContent = 'Gib einen Channel-Namen ein…';
+      return;
+    }
+
+    const base = window.location.href.replace('settings.html', 'overlay.html').split('?')[0];
+    const params = new URLSearchParams();
+
+    params.set('channel', channel);
+
+    const numFields = ['delay','maxMessages','offsetX','offsetY','width','messageGap','cornerRadius','fontSize','avatarSize'];
+    const boolFields = ['showAvatar','showBadges','nameShadow','bttv','sevenTv'];
+    const strFields = ['fontFamily','bgColor','textColor','animation'];
+
+    for (const f of numFields) params.set(f, get(f));
+    for (const f of boolFields) params.set(f, get(f));
+    for (const f of strFields) params.set(f, get(f));
+
+    out.textContent = base + '?' + params.toString();
+  }
+
+  function copyUrl() {
+    const text = document.getElementById('url-output').textContent;
+    if (!text || text.includes('Gib einen')) return;
+    navigator.clipboard.writeText(text).then(() => showToast());
+  }
+
+  function openPreviewWindow() {
+    const text = document.getElementById('url-output').textContent;
+    if (!text || text.includes('Gib einen')) return;
+    window.open(text, '_blank', 'width=500,height=700');
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // ── Persist state ──────────────────────────────────
+  function saveState() {
+    const state = {};
+    for (const key of Object.keys(DEFAULTS)) {
+      state[key] = get(key);
+    }
+    localStorage.setItem('tco_settings', JSON.stringify(state));
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem('tco_settings');
+      if (!raw) return;
+      const state = JSON.parse(raw);
+      for (const [key, val] of Object.entries(state)) {
+        const el = document.getElementById(key);
+        if (!el) continue;
+        if (el.type === 'checkbox') el.checked = val === true || val === 'true';
+        else el.value = val;
+      }
+      // Sync color pickers
+      syncColorFromText('bg');
+      syncColorFromText('text');
+    } catch(e) { console.warn('Could not load state', e); }
+  }
+
+  function resetAll() {
+    localStorage.removeItem('tco_settings');
+    for (const [key, val] of Object.entries(DEFAULTS)) {
+      const el = document.getElementById(key);
+      if (!el) continue;
+      if (el.type === 'checkbox') el.checked = val;
+      else el.value = val;
+    }
+    syncColorFromText('bg');
+    syncColorFromText('text');
+    update();
+  }
+
+  // ── Init ──────────────────────────────────────────
+  loadState();
+  update();
+</script>
+</body>
+</html>
