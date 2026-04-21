@@ -32,6 +32,8 @@ const CONFIG = (() => {
     msgFontWeight:    get('msgFontWeight', '400'),    // may encode italic: "400italic"
     bgColor:          get('bgColor', '00000080'),
     textColor:        get('textColor', 'ffffff'),
+    overrideNameColor: getBool('overrideNameColor', false),
+    nameColor:        get('nameColor', 'ffffff'),
     nameShadow:       getBool('nameShadow', true),
     // Avatar
     showAvatar:       getBool('showAvatar', true),
@@ -398,9 +400,12 @@ async function showMessage(msg) {
   const nameEl = document.createElement('span');
   nameEl.className = 'username';
   nameEl.textContent = msg.displayName || msg.username;
-  nameEl.style.color = msg.color || '#9b9b9b';
+  const resolvedColor = CONFIG.overrideNameColor
+    ? '#' + CONFIG.nameColor
+    : (msg.color || '#9b9b9b');
+  nameEl.style.color = resolvedColor;
   if (CONFIG.nameShadow) {
-    nameEl.style.textShadow = `0 0 8px ${msg.color || '#9b9b9b'}60`;
+    nameEl.style.textShadow = `0 0 8px ${resolvedColor}60`;
   }
   header.appendChild(nameEl);
   body.appendChild(header);

@@ -581,6 +581,23 @@
       </div>
     </div>
 
+    <div class="field">
+      <div class="toggle-row">
+        <span class="toggle-label">Globale Namensfarbe</span>
+        <label class="toggle">
+          <input type="checkbox" id="overrideNameColor" onchange="update()">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+    <div class="field" id="nameColorField" style="display:none">
+      <label>Namensfarbe</label>
+      <div class="color-row">
+        <input type="color" id="nameColorPicker" value="#ffffff" oninput="syncColor('name')">
+        <input type="text" id="nameColor" value="ffffff" placeholder="RRGGBB" oninput="update()">
+      </div>
+    </div>
+
     <div class="card-title" style="margin-top:20px;">// Emotes</div>
 
     <div class="field">
@@ -676,6 +693,7 @@
     msgFontFamily: 'Inter, sans-serif', msgFontSize: 15, msgFontWeight: '400',
     bgColor: '00000080', textColor: 'ffffff',
     showAvatar: true, avatarSize: 36, showBadges: true, nameShadow: true,
+    overrideNameColor: false, nameColor: 'ffffff',
     animation: 'slide', bttv: true, sevenTv: true,
     blocklist: 'streamelements,streamlabs,nightbot,moobot,fossabot,wizebot,botrix',
   };
@@ -689,6 +707,10 @@
 
   function update() {
     updateLabels();
+    // Show/hide the global name color picker
+    const overrideOn = document.getElementById('overrideNameColor')?.checked;
+    const ncField = document.getElementById('nameColorField');
+    if (ncField) ncField.style.display = overrideOn ? '' : 'none';
     updatePreview();
     generateUrl();
     updateBadgeCmd();
@@ -811,6 +833,11 @@
       el.style.fontSize = nameFontSize;
       el.style.fontWeight = nameFontWeight;
       el.style.fontStyle = nameFontStyle;
+      if (get('overrideNameColor')) {
+        el.style.color = '#' + (get('nameColor') || 'ffffff');
+      } else {
+        el.style.color = '';
+      }
     });
     document.querySelectorAll('.preview-text').forEach(el => {
       el.style.fontFamily = msgFontFamily;
@@ -837,8 +864,8 @@
     params.set('channel', channel);
 
     const numFields = ['delay','maxMessages','offsetX','offsetY','width','messageGap','cornerRadius','fontSize','avatarSize','nameFontSize','msgFontSize'];
-    const boolFields = ['showAvatar','showBadges','nameShadow','bttv','sevenTv'];
-    const strFields = ['fontFamily','bgColor','textColor','animation','blocklist','nameFontFamily','nameFontWeight','msgFontFamily','msgFontWeight'];
+    const boolFields = ['showAvatar','showBadges','nameShadow','bttv','sevenTv','overrideNameColor'];
+    const strFields = ['fontFamily','bgColor','textColor','animation','blocklist','nameFontFamily','nameFontWeight','msgFontFamily','msgFontWeight','nameColor'];
 
     for (const f of numFields) params.set(f, get(f));
     for (const f of boolFields) params.set(f, get(f));
@@ -888,6 +915,7 @@
       // Sync color pickers
       syncColorFromText('bg');
       syncColorFromText('text');
+      syncColorFromText('name');
     } catch(e) { console.warn('Could not load state', e); }
   }
 
@@ -901,6 +929,7 @@
     }
     syncColorFromText('bg');
     syncColorFromText('text');
+    syncColorFromText('name');
     update();
   }
 
