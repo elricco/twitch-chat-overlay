@@ -367,6 +367,18 @@
       <input type="text" id="blocklist" placeholder="bot1,bot2,bot3" oninput="update()">
       <div class="opacity-hint">Kommagetrennte Usernamen (Bots, unerwünschte Accounts)</div>
     </div>
+
+    <div class="field">
+      <label>Kanal-Badges <span class="value-badge" id="badge-status"></span></label>
+      <div class="opacity-hint" style="margin-bottom:8px">Einmalig im Terminal ausführen, dann Overlay neu laden:</div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="badge-cmd" readonly onclick="this.select()"
+          style="flex:1;color:var(--green);cursor:text"
+          value="node fetch-badges.js">
+        <button class="btn-secondary" style="padding:6px 14px;font-size:0.78rem;flex-shrink:0"
+          onclick="copyBadgeCmd()">Kopieren</button>
+      </div>
+    </div>
   </div>
 
   <!-- Layout -->
@@ -608,6 +620,7 @@
     updateLabels();
     updatePreview();
     generateUrl();
+    updateBadgeCmd();
     saveState();
   }
 
@@ -794,8 +807,44 @@
     update();
   }
 
+  // ── Badge command ──────────────────────────────────
+  function updateBadgeCmd() {
+    const channel = (get('channel') || '').trim();
+    const cmd = document.getElementById('badge-cmd');
+    if (cmd) cmd.value = 'node fetch-badges.js' + (channel ? ' ' + channel : '');
+  }
+
+  async function copyBadgeCmd() {
+    const val = document.getElementById('badge-cmd')?.value;
+    if (!val) return;
+    await navigator.clipboard.writeText(val);
+    showToast();
+  }
+
+  async function checkBadgesFile() {
+    const el = document.getElementById('badge-status');
+    if (!el) return;
+    // fetch() on file:// is blocked by browsers; skip silently
+    if (location.protocol === 'file:') return;
+    try {
+      const r = await fetch('badges.json');
+      if (r.ok) {
+        const data = await r.json();
+        el.textContent = `✓ ${Object.keys(data).length} Sets geladen`;
+        el.style.color = 'var(--green)';
+      } else {
+        el.textContent = 'badges.json fehlt';
+        el.style.color = 'var(--muted)';
+      }
+    } catch (_) {
+      el.textContent = 'badges.json fehlt';
+      el.style.color = 'var(--muted)';
+    }
+  }
+
   // ── Init ──────────────────────────────────────────
   loadState();
+  checkBadgesFile();
   update();
 </script>
 </body>
