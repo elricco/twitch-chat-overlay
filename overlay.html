@@ -88,6 +88,15 @@
       transform: translateX(0);
     }
 
+    /* slide-right */
+    #chat-container[data-animation="slide-right"] .chat-message {
+      transform: translateX(28px);
+    }
+    #chat-container[data-animation="slide-right"] .chat-message.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
     /* fade */
     #chat-container[data-animation="fade"] .chat-message {
       transform: none;
