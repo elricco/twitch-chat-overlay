@@ -419,8 +419,8 @@ async function showMessage(msg) {
   el.appendChild(body);
   container.appendChild(el);
 
-  // Trigger animation
-  requestAnimationFrame(() => el.classList.add('visible'));
+  // Trigger animation: double-rAF ensures initial state is painted before transition
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('visible')));
 
   displayedMessages.set(msg.id, el);
 
