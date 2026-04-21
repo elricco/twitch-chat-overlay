@@ -264,14 +264,22 @@ function buildBadges(badgeStr, badgeInfo) {
   return wrapper;
 }
 
+const FALLBACK_AVATAR = 'https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png';
 let avatarCache = {};
 
 async function getAvatar(username) {
   if (avatarCache[username]) return avatarCache[username];
-  // Use unavatar as a free proxy (no auth needed)
-  const url = `https://unavatar.io/twitch/${username}?fallback=https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png`;
-  avatarCache[username] = url;
-  return url;
+  try {
+    const r = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${encodeURIComponent(username)}`);
+    if (r.ok) {
+      const data = await r.json();
+      const url = (Array.isArray(data) ? data[0]?.logo : data?.logo) || FALLBACK_AVATAR;
+      avatarCache[username] = url;
+      return url;
+    }
+  } catch (_) {}
+  avatarCache[username] = FALLBACK_AVATAR;
+  return FALLBACK_AVATAR;
 }
 
 async function showMessage(msg) {
@@ -285,6 +293,7 @@ async function showMessage(msg) {
     const avatar = document.createElement('img');
     avatar.className = 'avatar';
     avatar.alt = msg.username;
+    avatar.onerror = () => { avatar.src = FALLBACK_AVATAR; };
     getAvatar(msg.username).then(url => { avatar.src = url; });
     el.appendChild(avatar);
   }
