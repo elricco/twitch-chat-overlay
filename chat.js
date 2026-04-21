@@ -40,6 +40,7 @@ const CONFIG = (() => {
     avatarSize:       getNum('avatarSize', 36),
     // Badges
     showBadges:       getBool('showBadges', true),
+    bubbleFit:        getBool('bubbleFit', false),
     // Animation
     animation:        get('animation', 'slide'), // slide | fade | pop | none
     // Emotes
@@ -118,6 +119,7 @@ function applyConfig() {
   const container = document.getElementById('chat-container');
   if (container) {
     container.dataset.animation = CONFIG.animation;
+    container.classList.toggle('bubble-fit', CONFIG.bubbleFit);
   }
 }
 

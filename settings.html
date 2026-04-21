@@ -573,6 +573,16 @@
 
     <div class="field">
       <div class="toggle-row">
+        <span class="toggle-label">Bubble-Breite = Inhalt</span>
+        <label class="toggle">
+          <input type="checkbox" id="bubbleFit" onchange="update()">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="toggle-row">
         <span class="toggle-label">Namen-Glow</span>
         <label class="toggle">
           <input type="checkbox" id="nameShadow" checked onchange="update()">
@@ -693,7 +703,7 @@
     nameFontFamily: 'Inter, sans-serif', nameFontSize: 13, nameFontWeight: '700',
     msgFontFamily: 'Inter, sans-serif', msgFontSize: 15, msgFontWeight: '400',
     bgColor: '00000080', textColor: 'ffffff',
-    showAvatar: true, avatarSize: 36, showBadges: true, nameShadow: true,
+    showAvatar: true, avatarSize: 36, showBadges: true, bubbleFit: false, nameShadow: true,
     overrideNameColor: false, nameColor: 'ffffff',
     animation: 'slide', bttv: true, sevenTv: true,
     blocklist: 'streamelements,streamlabs,nightbot,moobot,fossabot,wizebot,botrix',
@@ -865,7 +875,7 @@
     params.set('channel', channel);
 
     const numFields = ['delay','maxMessages','offsetX','offsetY','width','messageGap','cornerRadius','fontSize','avatarSize','nameFontSize','msgFontSize'];
-    const boolFields = ['showAvatar','showBadges','nameShadow','bttv','sevenTv','overrideNameColor'];
+    const boolFields = ['showAvatar','showBadges','bubbleFit','nameShadow','bttv','sevenTv','overrideNameColor'];
     const strFields = ['fontFamily','bgColor','textColor','animation','blocklist','nameFontFamily','nameFontWeight','msgFontFamily','msgFontWeight','nameColor'];
 
     for (const f of numFields) params.set(f, get(f));
