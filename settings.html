@@ -369,6 +369,44 @@
       pointer-events: none;
     }
     .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* Two-column page layout with sticky preview */
+    .main-layout {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      padding: 0 24px;
+      margin: 0 auto;
+      width: 1920px;
+    }
+    .settings-col {
+      flex: 0 0 1000px;
+      min-width: 0;
+    }
+    .preview-col {
+      width: 460px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 24px;
+      align-self: flex-start;
+    }
+    .preview-col .preview-card {
+      max-width: none;
+      margin: 0;
+    }
+    @media (max-width: 1340px) {
+      .main-layout {
+        flex-direction: column;
+      }
+      .settings-col {
+        flex: 0 0 auto;
+        width: 100%;
+      }
+      .preview-col {
+        width: 100%;
+        position: static;
+      }
+    }
   </style>
 </head>
 <body>
@@ -377,6 +415,9 @@
   <h1>Twitch Chat Overlay</h1>
   <p>// configure · copy url · drop into obs</p>
 </div>
+
+<div class="main-layout">
+  <div class="settings-col">
 
 <div class="layout">
 
@@ -707,6 +748,9 @@
   </div>
 </div>
 
+  </div><!-- /.settings-col -->
+
+  <div class="preview-col">
 <!-- Live Preview -->
 <div class="preview-card">
   <h2>// Live-Vorschau</h2>
@@ -744,6 +788,9 @@
     </div>
   </div>
 </div>
+
+  </div><!-- /.preview-col -->
+</div><!-- /.main-layout -->
 
 <div class="toast" id="toast">✓ Kopiert!</div>
 
@@ -875,6 +922,9 @@
     const msgWeightRaw = get('msgFontWeight');
     const msgFontWeight = msgWeightRaw.replace('italic','').trim() || '400';
     const msgFontStyle = msgWeightRaw.includes('italic') ? 'italic' : 'normal';
+
+    const previewCol = document.querySelector('.preview-col');
+    if (previewCol) previewCol.style.width = (Number(get('width')) + 88) + 'px';
 
     const chat = document.getElementById('preview-chat');
     chat.style.gap = gap;
