@@ -451,18 +451,6 @@
       <input type="text" id="blocklist" placeholder="bot1,bot2,bot3" oninput="update()">
       <div class="opacity-hint">Kommagetrennte Usernamen (Bots, unerwünschte Accounts)</div>
     </div>
-
-    <div class="field">
-      <label>Kanal-Badges <span class="value-badge" id="badge-status"></span></label>
-      <div class="opacity-hint" style="margin-bottom:8px">Globale Badges werden automatisch geladen. Kanal-Badges (Sub-Badges etc.) können <em>optional</em> einmalig per Node vorgeladen werden – nicht zwingend nötig:</div>
-      <div style="display:flex;gap:8px">
-        <input type="text" id="badge-cmd" readonly onclick="this.select()"
-          style="flex:1;color:var(--green);cursor:text"
-          value="node fetch-badges.js">
-        <button class="btn-secondary" style="padding:6px 14px;font-size:0.78rem;flex-shrink:0"
-          onclick="copyBadgeCmd()">Kopieren</button>
-      </div>
-    </div>
   </div>
 
   <!-- Layout -->
