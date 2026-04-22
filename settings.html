@@ -812,7 +812,6 @@
     if (ncField) ncField.style.display = overrideOn ? '' : 'none';
     updatePreview();
     generateUrl();
-    updateBadgeCmd();
     saveState();
   }
 
@@ -1050,44 +1049,8 @@
     update();
   }
 
-  // ── Badge command ──────────────────────────────────
-  function updateBadgeCmd() {
-    const channel = (get('channel') || '').trim();
-    const cmd = document.getElementById('badge-cmd');
-    if (cmd) cmd.value = 'node fetch-badges.js' + (channel ? ' ' + channel : '');
-  }
-
-  async function copyBadgeCmd() {
-    const val = document.getElementById('badge-cmd')?.value;
-    if (!val) return;
-    await navigator.clipboard.writeText(val);
-    showToast();
-  }
-
-  async function checkBadgesFile() {
-    const el = document.getElementById('badge-status');
-    if (!el) return;
-    // fetch() on file:// is blocked by browsers; skip silently
-    if (location.protocol === 'file:') return;
-    try {
-      const r = await fetch('badges.json');
-      if (r.ok) {
-        const data = await r.json();
-        el.textContent = `✓ ${Object.keys(data).length} Sets geladen`;
-        el.style.color = 'var(--green)';
-      } else {
-        el.textContent = 'badges.json fehlt';
-        el.style.color = 'var(--muted)';
-      }
-    } catch (_) {
-      el.textContent = 'badges.json fehlt';
-      el.style.color = 'var(--muted)';
-    }
-  }
-
   // ── Init ──────────────────────────────────────────
   loadState();
-  checkBadgesFile();
   update();
 </script>
 </body>
