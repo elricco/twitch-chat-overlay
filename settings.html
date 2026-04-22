@@ -289,15 +289,19 @@
       );
       border-radius: 8px;
       padding: 20px;
-      min-height: 200px;
-      display: flex;
-      align-items: flex-end;
+      min-height: 220px;
+      position: relative;
+      overflow: hidden;
     }
     #preview-chat {
       display: flex;
       flex-direction: column;
       gap: 6px;
       width: 400px;
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      transition: transform 0.2s ease;
     }
     .preview-msg {
       display: flex;
@@ -306,17 +310,47 @@
       padding: 6px 10px;
       line-height: 1.4;
       word-break: break-word;
-      font-size: 15px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #preview-chat.bubble-fit .preview-msg {
+      width: fit-content;
+      max-width: 100%;
+    }
+    #preview-chat.bubble-fit.alternating .preview-msg:nth-child(even) {
+      margin-left: auto;
     }
     .preview-avatar {
       width: 36px;
       height: 36px;
       border-radius: 50%;
       flex-shrink: 0;
+      object-fit: cover;
     }
     .preview-body { flex: 1; min-width: 0; }
+    .preview-header {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 2px;
+    }
+    .preview-badge {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      image-rendering: auto;
+    }
     .preview-name { font-weight: 700; font-size: 13.5px; }
-    .preview-text { margin-top: 2px; font-size: 15px; color: #e8e8f0; }
+    .preview-text { margin-top: 2px; font-size: 15px; }
+    .preview-emote {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin: 0 2px;
+      flex-shrink: 0;
+    }
 
     .toast {
       position: fixed;
@@ -583,6 +617,17 @@
 
     <div class="field">
       <div class="toggle-row">
+        <span class="toggle-label">Alternierend (links / rechts)</span>
+        <label class="toggle">
+          <input type="checkbox" id="alternating" onchange="update()">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+      <div class="opacity-hint">Wirkt nur wenn "Bubble-Breite = Inhalt" aktiv ist</div>
+    </div>
+
+    <div class="field">
+      <div class="toggle-row">
         <span class="toggle-label">Namen-Glow</span>
         <label class="toggle">
           <input type="checkbox" id="nameShadow" checked onchange="update()">
@@ -668,23 +713,31 @@
   <div id="preview-frame-wrapper">
     <div id="preview-chat">
       <div class="preview-msg" id="prev1">
-        <img class="preview-avatar" id="prev-av1" src="" alt="">
+        <img class="preview-avatar" id="prev-av1" src="https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png" alt="">
         <div class="preview-body">
-          <div class="preview-name" style="color:#9b5de5">StreamerFan99</div>
-          <div class="preview-text">Dieses Overlay sieht mega aus Pog</div>
+          <div class="preview-header">
+            <img class="preview-badge" src="https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/2" alt="sub" title="Subscriber">
+            <span class="preview-name" style="color:#9b5de5">StreamerFan99</span>
+          </div>
+          <div class="preview-text">Dieses Overlay sieht mega aus <img class="preview-emote" src="https://cdn.betterttv.net/emote/54fa8f1401e468494b85b537/2x" alt="Pog" title="Pog"></div>
         </div>
       </div>
       <div class="preview-msg" id="prev2">
-        <img class="preview-avatar" id="prev-av2" src="" alt="">
+        <img class="preview-avatar" id="prev-av2" src="https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png" alt="">
         <div class="preview-body">
-          <div class="preview-name" style="color:#f15bb5">CoolViewer</div>
-          <div class="preview-text">LUL ja richtig nice!!</div>
+          <div class="preview-header">
+            <img class="preview-badge" src="https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/2" alt="mod" title="Moderator">
+            <span class="preview-name" style="color:#f15bb5">CoolViewer</span>
+          </div>
+          <div class="preview-text">LUL ja richtig nice!! <img class="preview-emote" src="https://cdn.betterttv.net/emote/567b00c61ddbe1786688a6f0/2x" alt="LUL" title="LUL"></div>
         </div>
       </div>
       <div class="preview-msg" id="prev3">
-        <img class="preview-avatar" id="prev-av3" src="" alt="">
+        <img class="preview-avatar" id="prev-av3" src="https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png" alt="">
         <div class="preview-body">
-          <div class="preview-name" style="color:#00f5d4">TwitchNerd</div>
+          <div class="preview-header">
+            <span class="preview-name" style="color:#00f5d4">TwitchNerd</span>
+          </div>
           <div class="preview-text">Wann kommt der nächste Stream? 👀</div>
         </div>
       </div>
@@ -703,7 +756,7 @@
     nameFontFamily: 'Inter, sans-serif', nameFontSize: 13, nameFontWeight: '700',
     msgFontFamily: 'Inter, sans-serif', msgFontSize: 15, msgFontWeight: '400',
     bgColor: '00000080', textColor: 'ffffff',
-    showAvatar: true, avatarSize: 36, showBadges: true, bubbleFit: false, nameShadow: true,
+    showAvatar: true, avatarSize: 36, showBadges: true, bubbleFit: false, alternating: false, nameShadow: true,
     overrideNameColor: false, nameColor: 'ffffff',
     animation: 'slide', bttv: true, sevenTv: true,
     blocklist: 'streamelements,streamlabs,nightbot,moobot,fossabot,wizebot,botrix',
@@ -783,6 +836,9 @@
   }
 
   function updatePreview() {
+    const FALLBACK_AV = 'https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png';
+    const PREVIEW_COLORS = ['#9b5de5', '#f15bb5', '#00f5d4'];
+
     const msgs = [
       document.getElementById('prev1'),
       document.getElementById('prev2'),
@@ -801,6 +857,10 @@
     const avSize = get('avatarSize') + 'px';
     const gap = get('messageGap') + 'px';
     const width = get('width') + 'px';
+    const showBadges = get('showBadges');
+    const bubbleFit = get('bubbleFit');
+    const offsetX = Number(get('offsetX')) || 0;
+    const offsetY = Number(get('offsetY')) || 0;
 
     // Name typography
     const nameFontFamily = get('nameFontFamily');
@@ -819,43 +879,51 @@
     const chat = document.getElementById('preview-chat');
     chat.style.gap = gap;
     chat.style.width = width;
+    chat.classList.toggle('bubble-fit', bubbleFit);
+    chat.classList.toggle('alternating', get('alternating'));
 
-    const avatarPlaceholders = [
-      'https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png',
-      'https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png',
-      'https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png',
-    ];
+    // Offset: scale down to preview size (preview ~560px wide, 1920 stream → /6; 220px tall, 1080 → /6)
+    const tx = Math.min(offsetX / 6, 120);
+    const ty = Math.min(offsetY / 6, 80);
+    chat.style.transform = tx || ty ? `translate(${tx}px, -${ty}px)` : '';
 
     msgs.forEach((el, i) => {
       el.style.background = bg;
       el.style.borderRadius = cr;
       el.style.color = tc;
 
+      // Avatar
       avs[i].style.display = showAv ? 'block' : 'none';
       avs[i].style.width = avSize;
       avs[i].style.height = avSize;
-      if (!avs[i].src || avs[i].src.endsWith('/')) {
-        avs[i].src = avatarPlaceholders[i];
-      }
+      avs[i].src = FALLBACK_AV;
+
+      // Badges
+      const badge = el.querySelector('.preview-badge');
+      if (badge) badge.style.display = showBadges ? '' : 'none';
     });
 
-    document.querySelectorAll('.preview-name').forEach(el => {
+    document.querySelectorAll('.preview-name').forEach((el, i) => {
       el.style.fontFamily = nameFontFamily;
       el.style.fontSize = nameFontSize;
       el.style.fontWeight = nameFontWeight;
       el.style.fontStyle = nameFontStyle;
-      if (get('overrideNameColor')) {
-        el.style.color = '#' + (get('nameColor') || 'ffffff');
-      } else {
-        el.style.color = '';
-      }
+      el.style.color = get('overrideNameColor')
+        ? '#' + (get('nameColor') || 'ffffff')
+        : PREVIEW_COLORS[i] || PREVIEW_COLORS[0];
     });
+
     document.querySelectorAll('.preview-text').forEach(el => {
       el.style.fontFamily = msgFontFamily;
       el.style.fontSize = msgFontSize;
       el.style.fontWeight = msgFontWeight;
       el.style.fontStyle = msgFontStyle;
       el.style.color = tc;
+    });
+
+    document.querySelectorAll('.preview-emote').forEach(el => {
+      el.style.height = `calc(${msgFontSize} * 1.5)`;
+      el.style.width = 'auto';
     });
   }
 
@@ -875,7 +943,7 @@
     params.set('channel', channel);
 
     const numFields = ['delay','maxMessages','offsetX','offsetY','width','messageGap','cornerRadius','fontSize','avatarSize','nameFontSize','msgFontSize'];
-    const boolFields = ['showAvatar','showBadges','bubbleFit','nameShadow','bttv','sevenTv','overrideNameColor'];
+    const boolFields = ['showAvatar','showBadges','bubbleFit','alternating','nameShadow','bttv','sevenTv','overrideNameColor'];
     const strFields = ['fontFamily','bgColor','textColor','animation','blocklist','nameFontFamily','nameFontWeight','msgFontFamily','msgFontWeight','nameColor'];
 
     for (const f of numFields) params.set(f, get(f));

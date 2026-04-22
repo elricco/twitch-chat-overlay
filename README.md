@@ -64,6 +64,7 @@ twitch-overlay/
 | `avatarSize` | 36 | Avatar-Größe in px |
 | `showBadges` | true | Badges anzeigen |
 | `bubbleFit` | false | Bubble-Breite = Inhalt (fit-content) |
+| `alternating` | false | Gerade Nachrichten rechtsbündig (nur mit `bubbleFit`) |
 | `nameShadow` | true | Glow-Effekt auf Benutzernamen |
 | `animation` | slide | slide / slide-right / fade / pop / none |
 | `bttv` | true | BTTV-Emotes laden |

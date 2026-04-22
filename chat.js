@@ -41,6 +41,7 @@ const CONFIG = (() => {
     // Badges
     showBadges:       getBool('showBadges', true),
     bubbleFit:        getBool('bubbleFit', false),
+    alternating:      getBool('alternating', false),
     // Animation
     animation:        get('animation', 'slide'), // slide | fade | pop | none
     // Emotes
@@ -120,6 +121,7 @@ function applyConfig() {
   if (container) {
     container.dataset.animation = CONFIG.animation;
     container.classList.toggle('bubble-fit', CONFIG.bubbleFit);
+    container.classList.toggle('alternating', CONFIG.alternating);
   }
 }
 
