@@ -9,6 +9,11 @@ Ein vollständig konfigurierbares Twitch-Chat-Overlay für OBS/Streamlabs.
 - **7TV** – globale und Kanal-Emotes (WebP)
 - **Nachrichten-Verzögerung** – Nachrichten erscheinen erst nach X Sekunden
 - **Moderation** – gelöschte/gebannte Nachrichten werden entfernt (auch aus der Queue)
+- **Badges** – Twitch-Badges via IVR.fi API (kein OAuth nötig)
+- **Separate Schrift-Einstellungen** für Benutzernamen und Nachrichtentext (Familie, Größe, Schnitt)
+- **Globale Namensfarbe** – optionale Überschreibung der individuellen Twitch-Farben
+- **Bubble fit-content** – Nachrichten-Bubbles optional so breit wie der Inhalt
+- **Animationen** – slide-left, slide-right, fade, pop oder keine
 - **Vollständig einstellbar** via Settings-UI
 
 ## Einrichtung
@@ -43,15 +48,24 @@ twitch-overlay/
 | `width` | 400 | Breite des Overlays in px |
 | `messageGap` | 6 | Abstand zwischen Nachrichten in px |
 | `cornerRadius` | 8 | Eckenradius der Nachrichten-Boxen |
-| `fontSize` | 15 | Schriftgröße in px |
-| `fontFamily` | Inter | CSS-Schriftfamilie |
+| `fontSize` | 15 | Globale Fallback-Schriftgröße in px |
+| `fontFamily` | Inter | Globale Fallback-CSS-Schriftfamilie |
+| `nameFontFamily` | (fontFamily) | Schriftfamilie Benutzername |
+| `nameFontSize` | 13 | Schriftgröße Benutzername in px |
+| `nameFontWeight` | 700 | Schriftschnitt Benutzername (400 / 700 / 400italic / 700italic) |
+| `msgFontFamily` | (fontFamily) | Schriftfamilie Nachrichtentext |
+| `msgFontSize` | 15 | Schriftgröße Nachrichtentext in px |
+| `msgFontWeight` | 400 | Schriftschnitt Nachrichtentext |
 | `bgColor` | 00000080 | Hintergrund als RRGGBBAA (Hex) |
 | `textColor` | ffffff | Textfarbe als RRGGBB (Hex) |
+| `overrideNameColor` | false | Globale Namensfarbe aktivieren |
+| `nameColor` | ffffff | Globale Namensfarbe als RRGGBB |
 | `showAvatar` | true | Avatare anzeigen |
 | `avatarSize` | 36 | Avatar-Größe in px |
 | `showBadges` | true | Badges anzeigen |
+| `bubbleFit` | false | Bubble-Breite = Inhalt (fit-content) |
 | `nameShadow` | true | Glow-Effekt auf Benutzernamen |
-| `animation` | slide | slide / fade / pop / none |
+| `animation` | slide | slide / slide-right / fade / pop / none |
 | `bttv` | true | BTTV-Emotes laden |
 | `sevenTv` | true | 7TV-Emotes laden |
 
