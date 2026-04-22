@@ -81,4 +81,5 @@ twitch-overlay/
 
 - BTTV/7TV Kanal-Emotes benötigen die Twitch-User-ID. Ohne OAuth werden nur globale Emotes geladen.
 - Für vollständige Kanal-Emotes kann die Twitch-User-ID manuell als Parameter `channelId=XXXXXXXX` übergeben werden.
+- **Kanal-Badges** (Sub-Badges, Custom-Badges): Globale Badges werden automatisch zur Laufzeit geladen. Kanal-spezifische Badges können *optional* mit `node fetch-badges.js <kanalname>` vorgeladen werden – das Overlay funktioniert ohne diesen Schritt.
 - Das Overlay läuft komplett lokal – keine Daten werden an externe Server gesendet (außer den API-Requests für Emotes).
