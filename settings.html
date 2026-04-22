@@ -289,7 +289,7 @@
       );
       border-radius: 8px;
       padding: 20px;
-      min-height: 220px;
+      min-height: 328px;
       position: relative;
       overflow: hidden;
     }
@@ -491,7 +491,7 @@
   </div>
 
   <!-- Design -->
-  <div class="card">
+  <div class="card" style="grid-row: span 2">
     <div class="card-title">// Design</div>
 
     <div class="field">
@@ -706,7 +706,7 @@
   </div>
 
   <!-- Animation -->
-  <div class="card">
+  <div class="card" style="grid-column: 2">
     <div class="card-title">// Animation</div>
 
     <div class="field">
@@ -721,19 +721,6 @@
     </div>
   </div>
 
-</div>
-
-<!-- URL Output -->
-<div class="output-section">
-  <div class="url-box">
-    <h2>// OBS Browser Source URL</h2>
-    <div class="url-display" id="url-output">Gib einen Channel-Namen ein…</div>
-    <div class="btn-row">
-      <button class="btn-primary" onclick="copyUrl()">📋 URL kopieren</button>
-      <button class="btn-secondary" onclick="openPreviewWindow()">🖥 Overlay öffnen</button>
-      <button class="btn-secondary" onclick="resetAll()">↺ Zurücksetzen</button>
-    </div>
-  </div>
 </div>
 
   </div><!-- /.settings-col -->
@@ -773,6 +760,19 @@
           <div class="preview-text">Wann kommt der nächste Stream? 👀</div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- URL Output -->
+<div class="output-section">
+  <div class="url-box">
+    <h2>// OBS Browser Source URL</h2>
+    <div class="url-display" id="url-output">Gib einen Channel-Namen ein…</div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="copyUrl()">📋 URL kopieren</button>
+      <button class="btn-secondary" onclick="openPreviewWindow()">🖥 Overlay öffnen</button>
+      <button class="btn-secondary" onclick="resetAll()">↺ Zurücksetzen</button>
     </div>
   </div>
 </div>
