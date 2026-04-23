@@ -1356,7 +1356,6 @@
 
   function updatePreview() {
     rebuildPreviewStructure();
-    const FALLBACK_AV = 'https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png';
     const PREVIEW_COLORS = ['#9b5de5', '#f15bb5', '#00f5d4'];
 
     const msgs = [
@@ -1416,7 +1415,6 @@
       if (isSplit) {
         el.style.background = 'transparent';
         el.style.borderRadius = '0';
-        el.style.padding = '0';
         const body = el.querySelector('.preview-body');
         if (body) { body.style.background = bg; body.style.borderRadius = cr; }
         const nb = el.querySelector('.preview-name-bubble');
@@ -1429,14 +1427,12 @@
       } else {
         el.style.background   = bg;
         el.style.borderRadius = cr;
-        el.style.padding      = '';
       }
 
-      // Avatar (getElementById findet das Element unabhängig von der Verschachtelung)
       avs[i].style.display = showAv ? 'block' : 'none';
       avs[i].style.width   = avSize;
       avs[i].style.height  = avSize;
-      avs[i].src           = FALLBACK_AV;
+      avs[i].src           = PREVIEW_AV;
 
       // Badges
       const badge = el.querySelector('.preview-badge');
