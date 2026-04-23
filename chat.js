@@ -49,6 +49,13 @@ const CONFIG = (() => {
     sevenTv:          getBool('sevenTv', true),
     // Deleted messages
     hideDeleted:      getBool('hideDeleted', true),
+    // Split Bubble
+    splitBubble:       getBool('splitBubble', false),
+    nameBubbleColor:   get('nameBubbleColor', '9b5de580'),
+    nameBubbleRadius:  getNum('nameBubbleRadius', 8),
+    nameBubbleOffsetX: getNum('nameBubbleOffsetX', 0),
+    nameBubbleOffsetY: getNum('nameBubbleOffsetY', 0),
+    avatarPos:         get('avatarPos', 'before'), // 'before' | 'in-name' | 'in-message'
     blocklist:        new Set(
       get('blocklist', 'streamelements,streamlabs,nightbot,moobot,fossabot,wizebot,botrix')
         .split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
@@ -116,6 +123,11 @@ function applyConfig() {
 
   // Load Google Fonts for all active font families
   loadGoogleFonts(CONFIG.fontFamily, nameFam, msgFam);
+
+  root.style.setProperty('--name-bubble-bg',       '#' + CONFIG.nameBubbleColor);
+  root.style.setProperty('--name-bubble-radius',   CONFIG.nameBubbleRadius + 'px');
+  root.style.setProperty('--name-bubble-offset-x', CONFIG.nameBubbleOffsetX + 'px');
+  root.style.setProperty('--name-bubble-offset-y', CONFIG.nameBubbleOffsetY + 'px');
 
   const container = document.getElementById('chat-container');
   if (container) {
