@@ -711,6 +711,59 @@
 
     <div class="field">
       <div class="toggle-row">
+        <span class="toggle-label">Getrennte Bubbles</span>
+        <label class="toggle">
+          <input type="checkbox" id="splitBubble" onchange="update()">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div id="splitBubbleSection" style="display:none">
+      <div class="field">
+        <label class="subsection-label">// Namens-Bubble</label>
+      </div>
+      <div class="field">
+        <label>Hintergrundfarbe (Namens-Bubble)</label>
+        <div class="color-row">
+          <input type="color" id="nameBubbleColorPicker" value="#9b5de5" oninput="syncColor('nameBubble')">
+          <input type="text" id="nameBubbleColor" value="9b5de580" placeholder="RRGGBBAA" oninput="syncColorFromText('nameBubble'); update()">
+        </div>
+        <div class="opacity-hint">Format: RRGGBBAA – letzten 2 Stellen = Transparenz</div>
+      </div>
+      <div class="field">
+        <label>
+          Corner Radius
+          <span class="value-badge" id="lbl-nameBubbleRadius">8px</span>
+        </label>
+        <input type="range" id="nameBubbleRadius" min="0" max="24" step="1" value="8" oninput="update()">
+      </div>
+      <div class="field">
+        <label>
+          Versatz X (positiv = rechts)
+          <span class="value-badge" id="lbl-nameBubbleOffsetX">0px</span>
+        </label>
+        <input type="range" id="nameBubbleOffsetX" min="-20" max="80" step="1" value="0" oninput="update()">
+      </div>
+      <div class="field">
+        <label>
+          Versatz Y (negativ = Überlappung)
+          <span class="value-badge" id="lbl-nameBubbleOffsetY">0px</span>
+        </label>
+        <input type="range" id="nameBubbleOffsetY" min="-20" max="20" step="1" value="0" oninput="update()">
+      </div>
+      <div class="field" id="avatarPosField" style="display:none">
+        <label>Avatar-Position</label>
+        <select id="avatarPos" onchange="update()">
+          <option value="before">Vor beiden Bubbles</option>
+          <option value="in-name">In der Namens-Bubble</option>
+          <option value="in-message">In der Nachrichten-Bubble</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="toggle-row">
         <span class="toggle-label">Namen-Glow</span>
         <label class="toggle">
           <input type="checkbox" id="nameShadow" checked onchange="update()">
@@ -1122,6 +1175,12 @@
     overrideNameColor: false, nameColor: 'ffffff',
     animation: 'slide', bttv: true, sevenTv: true,
     blocklist: 'streamelements,streamlabs,nightbot,moobot,fossabot,wizebot,botrix',
+    splitBubble: false,
+    nameBubbleColor: '9b5de580',
+    nameBubbleRadius: 8,
+    nameBubbleOffsetX: 0,
+    nameBubbleOffsetY: 0,
+    avatarPos: 'before',
   };
 
   function get(id) {
@@ -1131,8 +1190,17 @@
     return el.value;
   }
 
+  function updateSplitVisibility() {
+    const isSplit = get('splitBubble');
+    const splitSection = document.getElementById('splitBubbleSection');
+    if (splitSection) splitSection.style.display = isSplit ? '' : 'none';
+    const avatarPosField = document.getElementById('avatarPosField');
+    if (avatarPosField) avatarPosField.style.display = (isSplit && get('showAvatar')) ? '' : 'none';
+  }
+
   function update() {
     updateLabels();
+    updateSplitVisibility();
     // Show/hide the global name color picker
     const overrideOn = document.getElementById('overrideNameColor')?.checked;
     const ncField = document.getElementById('nameColorField');
@@ -1155,6 +1223,9 @@
     avatarSize: v => v + 'px',
     nameFontSize: v => v + 'px',
     msgFontSize: v => v + 'px',
+    nameBubbleRadius:  v => v + 'px',
+    nameBubbleOffsetX: v => v + 'px',
+    nameBubbleOffsetY: v => v + 'px',
   };
 
   function updateLabels() {
@@ -1173,7 +1244,7 @@
     const picker = document.getElementById(which + 'ColorPicker');
     const text = document.getElementById(which + 'Color');
     const hex = picker.value.replace('#', '');
-    if (which === 'bg') {
+    if (which === 'bg' || which === 'nameBubble') {
       const alpha = text.value.slice(6) || 'ff';
       text.value = hex + alpha;
     } else {
@@ -1306,9 +1377,9 @@
 
     params.set('channel', channel);
 
-    const numFields = ['delay','maxMessages','offsetX','offsetY','width','messageGap','cornerRadius','fontSize','avatarSize','nameFontSize','msgFontSize'];
-    const boolFields = ['showAvatar','showBadges','bubbleFit','alternating','nameShadow','bttv','sevenTv','overrideNameColor'];
-    const strFields = ['fontFamily','bgColor','textColor','animation','blocklist','nameFontFamily','nameFontWeight','msgFontFamily','msgFontWeight','nameColor'];
+    const numFields = ['delay','maxMessages','offsetX','offsetY','width','messageGap','cornerRadius','fontSize','avatarSize','nameFontSize','msgFontSize','nameBubbleRadius','nameBubbleOffsetX','nameBubbleOffsetY'];
+    const boolFields = ['showAvatar','showBadges','bubbleFit','alternating','nameShadow','bttv','sevenTv','overrideNameColor','splitBubble'];
+    const strFields  = ['fontFamily','bgColor','textColor','animation','blocklist','nameFontFamily','nameFontWeight','msgFontFamily','msgFontWeight','nameColor','nameBubbleColor','avatarPos'];
 
     for (const f of numFields) params.set(f, get(f));
     for (const f of boolFields) params.set(f, get(f));
@@ -1359,6 +1430,7 @@
       syncColorFromText('bg');
       syncColorFromText('text');
       syncColorFromText('name');
+      syncColorFromText('nameBubble');
       syncFontPickers();
     } catch(e) { console.warn('Could not load state', e); }
   }
@@ -1374,6 +1446,7 @@
     syncColorFromText('bg');
     syncColorFromText('text');
     syncColorFromText('name');
+    syncColorFromText('nameBubble');
     syncFontPickers();
     update();
   }
