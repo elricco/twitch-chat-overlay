@@ -394,53 +394,84 @@ async function showMessage(msg) {
   el.dataset.id = msg.id;
   el.dataset.username = msg.username;
 
-  // Avatar
-  if (CONFIG.showAvatar) {
-    const avatar = document.createElement('img');
-    avatar.className = 'avatar';
-    avatar.alt = msg.username;
-    avatar.onerror = () => { avatar.src = FALLBACK_AVATAR; };
-    getAvatar(msg.username).then(url => { avatar.src = url; });
-    el.appendChild(avatar);
+  const makeAvatar = () => {
+    const av = document.createElement('img');
+    av.className = 'avatar';
+    av.alt = msg.username;
+    av.onerror = () => { av.src = FALLBACK_AVATAR; };
+    getAvatar(msg.username).then(url => { av.src = url; });
+    return av;
+  };
+
+  const makeNameEl = () => {
+    const nameEl = document.createElement('span');
+    nameEl.className = 'username';
+    nameEl.textContent = msg.displayName || msg.username;
+    const color = CONFIG.overrideNameColor ? '#' + CONFIG.nameColor : (msg.color || '#9b9b9b');
+    nameEl.style.color = color;
+    if (CONFIG.nameShadow) nameEl.style.textShadow = `0 0 8px ${color}60`;
+    return nameEl;
+  };
+
+  if (CONFIG.splitBubble) {
+    el.classList.add('split');
+
+    if (CONFIG.showAvatar && CONFIG.avatarPos === 'before') {
+      el.appendChild(makeAvatar());
+    }
+
+    const splitGroup = document.createElement('div');
+    splitGroup.className = 'split-group';
+
+    // Name bubble
+    const nameBubble = document.createElement('div');
+    nameBubble.className = 'name-bubble';
+    if (CONFIG.showAvatar && CONFIG.avatarPos === 'in-name') {
+      nameBubble.appendChild(makeAvatar());
+    }
+    nameBubble.appendChild(buildBadges(msg.badges, msg.badgeInfo));
+    nameBubble.appendChild(makeNameEl());
+    splitGroup.appendChild(nameBubble);
+
+    // Message body
+    const body = document.createElement('div');
+    body.className = 'message-body';
+    if (CONFIG.showAvatar && CONFIG.avatarPos === 'in-message') {
+      body.appendChild(makeAvatar());
+    }
+    const textEl = document.createElement('div');
+    textEl.className = 'message-text';
+    textEl.appendChild(renderTextWithTwitchEmotes(msg.message, msg.emotes));
+    body.appendChild(textEl);
+    splitGroup.appendChild(body);
+
+    el.appendChild(splitGroup);
+
+  } else {
+    // Unified (original layout)
+    if (CONFIG.showAvatar) el.appendChild(makeAvatar());
+
+    const body = document.createElement('div');
+    body.className = 'message-body';
+
+    const header = document.createElement('div');
+    header.className = 'message-header';
+    header.appendChild(buildBadges(msg.badges, msg.badgeInfo));
+    header.appendChild(makeNameEl());
+    body.appendChild(header);
+
+    const textEl = document.createElement('div');
+    textEl.className = 'message-text';
+    textEl.appendChild(renderTextWithTwitchEmotes(msg.message, msg.emotes));
+    body.appendChild(textEl);
+
+    el.appendChild(body);
   }
 
-  // Message body
-  const body = document.createElement('div');
-  body.className = 'message-body';
-
-  // Header: badges + name
-  const header = document.createElement('div');
-  header.className = 'message-header';
-  header.appendChild(buildBadges(msg.badges, msg.badgeInfo));
-
-  const nameEl = document.createElement('span');
-  nameEl.className = 'username';
-  nameEl.textContent = msg.displayName || msg.username;
-  const resolvedColor = CONFIG.overrideNameColor
-    ? '#' + CONFIG.nameColor
-    : (msg.color || '#9b9b9b');
-  nameEl.style.color = resolvedColor;
-  if (CONFIG.nameShadow) {
-    nameEl.style.textShadow = `0 0 8px ${resolvedColor}60`;
-  }
-  header.appendChild(nameEl);
-  body.appendChild(header);
-
-  // Text
-  const textEl = document.createElement('div');
-  textEl.className = 'message-text';
-  textEl.appendChild(renderTextWithTwitchEmotes(msg.message, msg.emotes));
-  body.appendChild(textEl);
-
-  el.appendChild(body);
   container.appendChild(el);
-
-  // Trigger animation: double-rAF ensures initial state is painted before transition
   requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('visible')));
-
   displayedMessages.set(msg.id, el);
 
-  // Trim old messages
   const all = container.querySelectorAll('.chat-message');
   if (all.length > CONFIG.maxMessages) {
     const oldest = all[0];
