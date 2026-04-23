@@ -437,6 +437,40 @@
       margin: 0 2px;
       flex-shrink: 0;
     }
+    .preview-msg--split {
+      background: transparent !important;
+      padding: 0 !important;
+      gap: 8px;
+    }
+    .preview-split-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .preview-name-bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+    .preview-name-bubble .preview-avatar {
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .preview-msg--split .preview-body {
+      padding: 6px 10px;
+      border-radius: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .preview-msg--split .preview-body .preview-avatar {
+      flex-shrink: 0;
+      border-radius: 50%;
+      object-fit: cover;
+    }
 
     .toast {
       position: fixed;
@@ -1267,7 +1301,61 @@
     return `rgba(${r},${g},${b},${a.toFixed(2)})`;
   }
 
+  const PREVIEW_AV = 'https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png';
+  const PREVIEW_DATA = [
+    { id: 1, name: 'StreamerFan99', color: '#9b5de5',
+      badgeSrc: 'https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/2', badgeAlt: 'sub',
+      textHtml: 'Dieses Overlay sieht mega aus <img class="preview-emote" src="https://cdn.betterttv.net/emote/54fa8f1401e468494b85b537/2x" alt="Pog" title="Pog">' },
+    { id: 2, name: 'CoolViewer',    color: '#f15bb5',
+      badgeSrc: 'https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/2', badgeAlt: 'mod',
+      textHtml: 'LUL ja richtig nice!! <img class="preview-emote" src="https://cdn.betterttv.net/emote/567b00c61ddbe1786688a6f0/2x" alt="LUL" title="LUL">' },
+    { id: 3, name: 'TwitchNerd',    color: '#00f5d4',
+      badgeSrc: null,
+      textHtml: 'Wann kommt der nächste Stream? 👀' },
+  ];
+
+  function rebuildPreviewStructure() {
+    const isSplit   = get('splitBubble');
+    const avatarPos = get('avatarPos');
+    const showAv    = get('showAvatar');
+    const showBadge = get('showBadges');
+
+    PREVIEW_DATA.forEach(data => {
+      const msgEl = document.getElementById('prev' + data.id);
+      if (!msgEl) return;
+
+      const avHtml = `<img class="preview-avatar" id="prev-av${data.id}" src="${PREVIEW_AV}" alt="" style="${showAv ? '' : 'display:none'}">`;
+      const badgeHtml = (showBadge && data.badgeSrc)
+        ? `<img class="preview-badge" src="${data.badgeSrc}" alt="${data.badgeAlt}" title="${data.badgeAlt}">`
+        : '';
+      const nameHtml = `<span class="preview-name" style="color:${data.color}">${data.name}</span>`;
+      const textHtml = `<div class="preview-text">${data.textHtml}</div>`;
+
+      if (isSplit) {
+        const avBefore    = avatarPos === 'before'     ? avHtml : '';
+        const avInName    = avatarPos === 'in-name'    ? avHtml : '';
+        const avInMessage = avatarPos === 'in-message' ? avHtml : '';
+        msgEl.innerHTML = `
+          ${avBefore}
+          <div class="preview-split-group">
+            <div class="preview-name-bubble">${avInName}${badgeHtml}${nameHtml}</div>
+            <div class="preview-body">${avInMessage}${textHtml}</div>
+          </div>`;
+        msgEl.classList.add('preview-msg--split');
+      } else {
+        msgEl.innerHTML = `
+          ${avHtml}
+          <div class="preview-body">
+            <div class="preview-header">${badgeHtml}${nameHtml}</div>
+            ${textHtml}
+          </div>`;
+        msgEl.classList.remove('preview-msg--split');
+      }
+    });
+  }
+
   function updatePreview() {
+    rebuildPreviewStructure();
     const FALLBACK_AV = 'https://static-cdn.jtvnw.net/user-default-pictures-uv/ebe4cd89-b4f4-4cd9-adac-2f30151b4209-profile_image-70x70.png';
     const PREVIEW_COLORS = ['#9b5de5', '#f15bb5', '#00f5d4'];
 
@@ -1322,16 +1410,33 @@
     const ty = Math.min(offsetY / 6, 80);
     chat.style.transform = tx || ty ? `translate(${tx}px, -${ty}px)` : '';
 
+    const isSplit = get('splitBubble');
     msgs.forEach((el, i) => {
-      el.style.background = bg;
-      el.style.borderRadius = cr;
       el.style.color = tc;
+      if (isSplit) {
+        el.style.background = 'transparent';
+        el.style.borderRadius = '0';
+        el.style.padding = '0';
+        const body = el.querySelector('.preview-body');
+        if (body) { body.style.background = bg; body.style.borderRadius = cr; }
+        const nb = el.querySelector('.preview-name-bubble');
+        if (nb) {
+          nb.style.background   = hexAlphaToRgba(get('nameBubbleColor') || '9b5de580');
+          nb.style.borderRadius = get('nameBubbleRadius') + 'px';
+          nb.style.marginLeft   = get('nameBubbleOffsetX') + 'px';
+          nb.style.marginBottom = get('nameBubbleOffsetY') + 'px';
+        }
+      } else {
+        el.style.background   = bg;
+        el.style.borderRadius = cr;
+        el.style.padding      = '';
+      }
 
-      // Avatar
+      // Avatar (getElementById findet das Element unabhängig von der Verschachtelung)
       avs[i].style.display = showAv ? 'block' : 'none';
-      avs[i].style.width = avSize;
-      avs[i].style.height = avSize;
-      avs[i].src = FALLBACK_AV;
+      avs[i].style.width   = avSize;
+      avs[i].style.height  = avSize;
+      avs[i].src           = FALLBACK_AV;
 
       // Badges
       const badge = el.querySelector('.preview-badge');
