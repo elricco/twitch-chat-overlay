@@ -228,6 +228,52 @@
       text-align: center;
       z-index: 999;
     }
+
+    /* ── Split Bubble Layout ── */
+    .chat-message.split {
+      background: transparent !important;
+      padding: 0;
+      gap: 0;
+    }
+
+    .split-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .name-bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--name-bubble-bg);
+      border-radius: var(--name-bubble-radius);
+      padding: 5px 10px;
+      margin-left: var(--name-bubble-offset-x);
+      margin-bottom: var(--name-bubble-offset-y);
+      position: relative;
+      z-index: 1;
+      max-width: 100%;
+    }
+
+    .name-bubble .avatar {
+      width: calc(var(--avatar-size) * 0.75);
+      height: calc(var(--avatar-size) * 0.75);
+      margin-top: 0;
+    }
+
+    .chat-message.split .message-body {
+      background: var(--bg-color);
+      border-radius: var(--corner-radius);
+      padding: 6px 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .chat-message.split .message-body .message-header {
+      display: none;
+    }
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
