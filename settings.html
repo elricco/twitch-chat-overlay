@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Twitch Overlay – Einstellungen</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syne:wght@400;600;800&family=Inter:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&family=Nunito:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Poppins:ital,wght@0,400;0,700;1,400;1,700&family=Rubik:ital,wght@0,400;0,700;1,400;1,700&family=Raleway:ital,wght@0,400;0,700;1,400;1,700&family=Exo+2:ital,wght@0,400;0,700;1,400;1,700&family=Orbitron:wght@400;700&family=Fredoka:wght@400;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&family=Comic+Neue:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syne:wght@400;600;800&display=swap');
 
     :root {
       --bg: #0d0d0f;
@@ -133,6 +133,92 @@
       width: 100%;
       accent-color: var(--accent);
       cursor: pointer;
+    }
+
+    /* ── Font Picker ─────────────────────────────── */
+    .font-picker { position: relative; width: 100%; }
+    .fp-trigger {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      transition: border-color 0.2s;
+    }
+    .fp-trigger:hover { border-color: var(--accent); }
+    .fp-trigger.open  {
+      border-color: var(--accent);
+      border-bottom-color: transparent;
+      border-radius: 8px 8px 0 0;
+    }
+    .fp-current-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .fp-arrow        { flex-shrink: 0; opacity: 0.5; font-family: 'Space Mono', monospace; }
+    .fp-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      z-index: 200;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .fp-search {
+      width: 100% !important;
+      background: var(--surface2) !important;
+      border: none !important;
+      border-bottom: 1px solid var(--border) !important;
+      border-radius: 0 !important;
+      padding: 9px 14px !important;
+      font-size: 0.8rem !important;
+    }
+    .fp-search:focus { border-bottom-color: var(--accent) !important; }
+    .fp-list-wrap {
+      max-height: 215px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    .fp-list { list-style: none; }
+    .fp-cat {
+      padding: 6px 14px 2px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      pointer-events: none;
+      user-select: none;
+    }
+    .fp-item {
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.1s, color 0.1s;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .fp-item:hover   { background: var(--surface2); color: var(--accent); }
+    .fp-item.selected { background: var(--surface2); color: var(--green); }
+    .fp-empty {
+      padding: 12px 14px;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      text-align: center;
     }
 
     /* Toggle switch */
@@ -508,23 +594,7 @@
     </div>
     <div class="field">
       <label>Schriftart (Name)</label>
-      <select id="nameFontFamily" onchange="update()">
-        <option value="Inter, sans-serif">Inter</option>
-        <option value="'Roboto', sans-serif">Roboto</option>
-        <option value="'Nunito', sans-serif">Nunito</option>
-        <option value="'DM Sans', sans-serif">DM Sans</option>
-        <option value="'Poppins', sans-serif">Poppins</option>
-        <option value="'Rubik', sans-serif">Rubik</option>
-        <option value="'Raleway', sans-serif">Raleway</option>
-        <option value="'Exo 2', sans-serif">Exo 2</option>
-        <option value="'Orbitron', sans-serif">Orbitron</option>
-        <option value="'Fredoka', cursive">Fredoka</option>
-        <option value="'Syne', sans-serif">Syne</option>
-        <option value="'Space Mono', monospace">Space Mono</option>
-        <option value="'Source Code Pro', monospace">Source Code Pro</option>
-        <option value="'Comic Neue', cursive">Comic Neue</option>
-        <option value="Arial, sans-serif">Arial</option>
-      </select>
+      <input type="hidden" id="nameFontFamily" value="Inter, sans-serif">
     </div>
     <div class="field">
       <label>
@@ -549,23 +619,7 @@
     </div>
     <div class="field">
       <label>Schriftart (Nachricht)</label>
-      <select id="msgFontFamily" onchange="update()">
-        <option value="Inter, sans-serif">Inter</option>
-        <option value="'Roboto', sans-serif">Roboto</option>
-        <option value="'Nunito', sans-serif">Nunito</option>
-        <option value="'DM Sans', sans-serif">DM Sans</option>
-        <option value="'Poppins', sans-serif">Poppins</option>
-        <option value="'Rubik', sans-serif">Rubik</option>
-        <option value="'Raleway', sans-serif">Raleway</option>
-        <option value="'Exo 2', sans-serif">Exo 2</option>
-        <option value="'Orbitron', sans-serif">Orbitron</option>
-        <option value="'Fredoka', cursive">Fredoka</option>
-        <option value="'Syne', sans-serif">Syne</option>
-        <option value="'Space Mono', monospace">Space Mono</option>
-        <option value="'Source Code Pro', monospace">Source Code Pro</option>
-        <option value="'Comic Neue', cursive">Comic Neue</option>
-        <option value="Arial, sans-serif">Arial</option>
-      </select>
+      <input type="hidden" id="msgFontFamily" value="Inter, sans-serif">
     </div>
     <div class="field">
       <label>
@@ -783,6 +837,278 @@
 <div class="toast" id="toast">✓ Kopiert!</div>
 
 <script>
+  // ── Font Picker ────────────────────────────────────
+  const GOOGLE_FONTS = [
+    // Sans-Serif
+    { name: 'Inter',              css: 'Inter, sans-serif',                    cat: 'Sans-Serif',  g: 'Inter' },
+    { name: 'Roboto',             css: "'Roboto', sans-serif",                 cat: 'Sans-Serif',  g: 'Roboto' },
+    { name: 'Open Sans',          css: "'Open Sans', sans-serif",              cat: 'Sans-Serif',  g: 'Open Sans' },
+    { name: 'Lato',               css: "'Lato', sans-serif",                   cat: 'Sans-Serif',  g: 'Lato' },
+    { name: 'Montserrat',         css: "'Montserrat', sans-serif",             cat: 'Sans-Serif',  g: 'Montserrat' },
+    { name: 'Nunito',             css: "'Nunito', sans-serif",                 cat: 'Sans-Serif',  g: 'Nunito' },
+    { name: 'Poppins',            css: "'Poppins', sans-serif",                cat: 'Sans-Serif',  g: 'Poppins' },
+    { name: 'DM Sans',            css: "'DM Sans', sans-serif",                cat: 'Sans-Serif',  g: 'DM Sans' },
+    { name: 'Raleway',            css: "'Raleway', sans-serif",                cat: 'Sans-Serif',  g: 'Raleway' },
+    { name: 'Rubik',              css: "'Rubik', sans-serif",                  cat: 'Sans-Serif',  g: 'Rubik' },
+    { name: 'Work Sans',          css: "'Work Sans', sans-serif",              cat: 'Sans-Serif',  g: 'Work Sans' },
+    { name: 'Quicksand',          css: "'Quicksand', sans-serif",              cat: 'Sans-Serif',  g: 'Quicksand' },
+    { name: 'Josefin Sans',       css: "'Josefin Sans', sans-serif",           cat: 'Sans-Serif',  g: 'Josefin Sans' },
+    { name: 'Outfit',             css: "'Outfit', sans-serif",                 cat: 'Sans-Serif',  g: 'Outfit' },
+    { name: 'Figtree',            css: "'Figtree', sans-serif",                cat: 'Sans-Serif',  g: 'Figtree' },
+    { name: 'Manrope',            css: "'Manrope', sans-serif",                cat: 'Sans-Serif',  g: 'Manrope' },
+    { name: 'Plus Jakarta Sans',  css: "'Plus Jakarta Sans', sans-serif",      cat: 'Sans-Serif',  g: 'Plus Jakarta Sans' },
+    { name: 'Lexend',             css: "'Lexend', sans-serif",                 cat: 'Sans-Serif',  g: 'Lexend' },
+    { name: 'Barlow',             css: "'Barlow', sans-serif",                 cat: 'Sans-Serif',  g: 'Barlow' },
+    { name: 'Karla',              css: "'Karla', sans-serif",                  cat: 'Sans-Serif',  g: 'Karla' },
+    { name: 'Mulish',             css: "'Mulish', sans-serif",                 cat: 'Sans-Serif',  g: 'Mulish' },
+    { name: 'Jost',               css: "'Jost', sans-serif",                   cat: 'Sans-Serif',  g: 'Jost' },
+    { name: 'Urbanist',           css: "'Urbanist', sans-serif",               cat: 'Sans-Serif',  g: 'Urbanist' },
+    { name: 'Asap',               css: "'Asap', sans-serif",                   cat: 'Sans-Serif',  g: 'Asap' },
+    { name: 'Dosis',              css: "'Dosis', sans-serif",                  cat: 'Sans-Serif',  g: 'Dosis' },
+    { name: 'Varela Round',       css: "'Varela Round', sans-serif",           cat: 'Sans-Serif',  g: 'Varela Round' },
+    { name: 'Ubuntu',             css: "'Ubuntu', sans-serif",                 cat: 'Sans-Serif',  g: 'Ubuntu' },
+    { name: 'Cabin',              css: "'Cabin', sans-serif",                  cat: 'Sans-Serif',  g: 'Cabin' },
+    { name: 'Oxanium',            css: "'Oxanium', sans-serif",                cat: 'Sans-Serif',  g: 'Oxanium' },
+    { name: 'Exo 2',              css: "'Exo 2', sans-serif",                  cat: 'Sans-Serif',  g: 'Exo 2' },
+    { name: 'Syne',               css: "'Syne', sans-serif",                   cat: 'Sans-Serif',  g: null },
+    { name: 'Kanit',              css: "'Kanit', sans-serif",                  cat: 'Sans-Serif',  g: 'Kanit' },
+    { name: 'Encode Sans',        css: "'Encode Sans', sans-serif",            cat: 'Sans-Serif',  g: 'Encode Sans' },
+    { name: 'Overpass',           css: "'Overpass', sans-serif",               cat: 'Sans-Serif',  g: 'Overpass' },
+    { name: 'Heebo',              css: "'Heebo', sans-serif",                  cat: 'Sans-Serif',  g: 'Heebo' },
+    { name: 'Teko',               css: "'Teko', sans-serif",                   cat: 'Sans-Serif',  g: 'Teko' },
+    { name: 'Libre Franklin',     css: "'Libre Franklin', sans-serif",         cat: 'Sans-Serif',  g: 'Libre Franklin' },
+    { name: 'Commissioner',       css: "'Commissioner', sans-serif",           cat: 'Sans-Serif',  g: 'Commissioner' },
+    { name: 'Chivo',              css: "'Chivo', sans-serif",                  cat: 'Sans-Serif',  g: 'Chivo' },
+    { name: 'IBM Plex Sans',      css: "'IBM Plex Sans', sans-serif",          cat: 'Sans-Serif',  g: 'IBM Plex Sans' },
+    { name: 'Noto Sans',          css: "'Noto Sans', sans-serif",              cat: 'Sans-Serif',  g: 'Noto Sans' },
+    { name: 'Source Sans 3',      css: "'Source Sans 3', sans-serif",          cat: 'Sans-Serif',  g: 'Source Sans 3' },
+    { name: 'Titillium Web',      css: "'Titillium Web', sans-serif",          cat: 'Sans-Serif',  g: 'Titillium Web' },
+    { name: 'PT Sans',            css: "'PT Sans', sans-serif",                cat: 'Sans-Serif',  g: 'PT Sans' },
+    { name: 'Fira Sans',          css: "'Fira Sans', sans-serif",              cat: 'Sans-Serif',  g: 'Fira Sans' },
+    { name: 'Abel',               css: "'Abel', sans-serif",                   cat: 'Sans-Serif',  g: 'Abel' },
+    { name: 'Acme',               css: "'Acme', sans-serif",                   cat: 'Sans-Serif',  g: 'Acme' },
+    // Serif
+    { name: 'Playfair Display',   css: "'Playfair Display', serif",            cat: 'Serif',       g: 'Playfair Display' },
+    { name: 'Merriweather',       css: "'Merriweather', serif",                cat: 'Serif',       g: 'Merriweather' },
+    { name: 'Lora',               css: "'Lora', serif",                        cat: 'Serif',       g: 'Lora' },
+    { name: 'EB Garamond',        css: "'EB Garamond', serif",                 cat: 'Serif',       g: 'EB Garamond' },
+    { name: 'Libre Baskerville',  css: "'Libre Baskerville', serif",           cat: 'Serif',       g: 'Libre Baskerville' },
+    { name: 'Cormorant Garamond', css: "'Cormorant Garamond', serif",          cat: 'Serif',       g: 'Cormorant Garamond' },
+    { name: 'Spectral',           css: "'Spectral', serif",                    cat: 'Serif',       g: 'Spectral' },
+    { name: 'Bitter',             css: "'Bitter', serif",                      cat: 'Serif',       g: 'Bitter' },
+    { name: 'Arvo',               css: "'Arvo', serif",                        cat: 'Serif',       g: 'Arvo' },
+    { name: 'Zilla Slab',         css: "'Zilla Slab', serif",                  cat: 'Serif',       g: 'Zilla Slab' },
+    { name: 'Rokkitt',            css: "'Rokkitt', serif",                     cat: 'Serif',       g: 'Rokkitt' },
+    { name: 'Domine',             css: "'Domine', serif",                      cat: 'Serif',       g: 'Domine' },
+    { name: 'Source Serif 4',     css: "'Source Serif 4', serif",              cat: 'Serif',       g: 'Source Serif 4' },
+    { name: 'PT Serif',           css: "'PT Serif', serif",                    cat: 'Serif',       g: 'PT Serif' },
+    { name: 'DM Serif Display',   css: "'DM Serif Display', serif",            cat: 'Serif',       g: 'DM Serif Display' },
+    { name: 'Crimson Text',       css: "'Crimson Text', serif",                cat: 'Serif',       g: 'Crimson Text' },
+    { name: 'Alegreya',           css: "'Alegreya', serif",                    cat: 'Serif',       g: 'Alegreya' },
+    { name: 'Cardo',              css: "'Cardo', serif",                       cat: 'Serif',       g: 'Cardo' },
+    { name: 'Vollkorn',           css: "'Vollkorn', serif",                    cat: 'Serif',       g: 'Vollkorn' },
+    { name: 'Noto Serif',         css: "'Noto Serif', serif",                  cat: 'Serif',       g: 'Noto Serif' },
+    // Monospace
+    { name: 'Space Mono',         css: "'Space Mono', monospace",              cat: 'Monospace',   g: null },
+    { name: 'Source Code Pro',    css: "'Source Code Pro', monospace",         cat: 'Monospace',   g: 'Source Code Pro' },
+    { name: 'JetBrains Mono',     css: "'JetBrains Mono', monospace",          cat: 'Monospace',   g: 'JetBrains Mono' },
+    { name: 'Fira Code',          css: "'Fira Code', monospace",               cat: 'Monospace',   g: 'Fira Code' },
+    { name: 'Roboto Mono',        css: "'Roboto Mono', monospace",             cat: 'Monospace',   g: 'Roboto Mono' },
+    { name: 'IBM Plex Mono',      css: "'IBM Plex Mono', monospace",           cat: 'Monospace',   g: 'IBM Plex Mono' },
+    { name: 'Inconsolata',        css: "'Inconsolata', monospace",             cat: 'Monospace',   g: 'Inconsolata' },
+    { name: 'Courier Prime',      css: "'Courier Prime', monospace",           cat: 'Monospace',   g: 'Courier Prime' },
+    { name: 'Share Tech Mono',    css: "'Share Tech Mono', monospace",         cat: 'Monospace',   g: 'Share Tech Mono' },
+    { name: 'Chivo Mono',         css: "'Chivo Mono', monospace",              cat: 'Monospace',   g: 'Chivo Mono' },
+    { name: 'Fragment Mono',      css: "'Fragment Mono', monospace",           cat: 'Monospace',   g: 'Fragment Mono' },
+    { name: 'Noto Sans Mono',     css: "'Noto Sans Mono', monospace",          cat: 'Monospace',   g: 'Noto Sans Mono' },
+    // Display
+    { name: 'Orbitron',           css: "'Orbitron', sans-serif",               cat: 'Display',     g: 'Orbitron' },
+    { name: 'Bebas Neue',         css: "'Bebas Neue', cursive",                cat: 'Display',     g: 'Bebas Neue' },
+    { name: 'Anton',              css: "'Anton', sans-serif",                  cat: 'Display',     g: 'Anton' },
+    { name: 'Russo One',          css: "'Russo One', sans-serif",              cat: 'Display',     g: 'Russo One' },
+    { name: 'Bungee',             css: "'Bungee', cursive",                    cat: 'Display',     g: 'Bungee' },
+    { name: 'Chakra Petch',       css: "'Chakra Petch', sans-serif",           cat: 'Display',     g: 'Chakra Petch' },
+    { name: 'Audiowide',          css: "'Audiowide', sans-serif",              cat: 'Display',     g: 'Audiowide' },
+    { name: 'Righteous',          css: "'Righteous', cursive",                 cat: 'Display',     g: 'Righteous' },
+    { name: 'Black Ops One',      css: "'Black Ops One', cursive",             cat: 'Display',     g: 'Black Ops One' },
+    { name: 'Squada One',         css: "'Squada One', cursive",                cat: 'Display',     g: 'Squada One' },
+    { name: 'Rajdhani',           css: "'Rajdhani', sans-serif",               cat: 'Display',     g: 'Rajdhani' },
+    { name: 'Press Start 2P',     css: "'Press Start 2P', cursive",            cat: 'Display',     g: 'Press Start 2P' },
+    { name: 'VT323',              css: "'VT323', monospace",                   cat: 'Display',     g: 'VT323' },
+    { name: 'Fredoka',            css: "'Fredoka', sans-serif",                cat: 'Display',     g: 'Fredoka' },
+    // Handwriting
+    { name: 'Comic Neue',         css: "'Comic Neue', cursive",                cat: 'Handwriting', g: 'Comic Neue' },
+    { name: 'Pacifico',           css: "'Pacifico', cursive",                  cat: 'Handwriting', g: 'Pacifico' },
+    { name: 'Dancing Script',     css: "'Dancing Script', cursive",            cat: 'Handwriting', g: 'Dancing Script' },
+    { name: 'Caveat',             css: "'Caveat', cursive",                    cat: 'Handwriting', g: 'Caveat' },
+    { name: 'Satisfy',            css: "'Satisfy', cursive",                   cat: 'Handwriting', g: 'Satisfy' },
+    { name: 'Permanent Marker',   css: "'Permanent Marker', cursive",          cat: 'Handwriting', g: 'Permanent Marker' },
+    { name: 'Indie Flower',       css: "'Indie Flower', cursive",              cat: 'Handwriting', g: 'Indie Flower' },
+    { name: 'Patrick Hand',       css: "'Patrick Hand', cursive",              cat: 'Handwriting', g: 'Patrick Hand' },
+    { name: 'Kalam',              css: "'Kalam', cursive",                     cat: 'Handwriting', g: 'Kalam' },
+    { name: 'Courgette',          css: "'Courgette', cursive",                 cat: 'Handwriting', g: 'Courgette' },
+    { name: 'Cookie',             css: "'Cookie', cursive",                    cat: 'Handwriting', g: 'Cookie' },
+    { name: 'Yellowtail',         css: "'Yellowtail', cursive",                cat: 'Handwriting', g: 'Yellowtail' },
+    { name: 'Amatic SC',          css: "'Amatic SC', cursive",                 cat: 'Handwriting', g: 'Amatic SC' },
+    { name: 'Sacramento',         css: "'Sacramento', cursive",                cat: 'Handwriting', g: 'Sacramento' },
+    // System
+    { name: 'Arial',              css: 'Arial, sans-serif',                    cat: 'System',      g: null },
+    { name: 'Georgia',            css: 'Georgia, serif',                       cat: 'System',      g: null },
+    { name: 'Times New Roman',    css: "'Times New Roman', serif",             cat: 'System',      g: null },
+    { name: 'Courier New',        css: "'Courier New', monospace",             cat: 'System',      g: null },
+    { name: 'Verdana',            css: 'Verdana, sans-serif',                  cat: 'System',      g: null },
+    { name: 'Impact',             css: 'Impact, sans-serif',                   cat: 'System',      g: null },
+    { name: 'Trebuchet MS',       css: "'Trebuchet MS', sans-serif",           cat: 'System',      g: null },
+  ];
+
+  const LOADED_PREVIEW_FONTS = new Set();
+
+  function loadPreviewFont(g) {
+    if (!g || LOADED_PREVIEW_FONTS.has(g)) return;
+    LOADED_PREVIEW_FONTS.add(g);
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?family=${g.replace(/\s+/g, '+')}:ital,wght@0,400;0,700;1,400;1,700&display=swap`;
+    document.head.appendChild(link);
+  }
+
+  function syncFontPickers() {
+    document.querySelectorAll('.font-picker').forEach(fp => {
+      if (fp._syncValue) fp._syncValue();
+    });
+  }
+
+  function initFontPicker(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'font-picker';
+    input.parentNode.insertBefore(wrapper, input);
+    wrapper.appendChild(input);
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'fp-current-name';
+    const arrowSpan = document.createElement('span');
+    arrowSpan.className = 'fp-arrow';
+    arrowSpan.textContent = '▾';
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'fp-trigger';
+    trigger.appendChild(nameSpan);
+    trigger.appendChild(arrowSpan);
+    wrapper.insertBefore(trigger, input);
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'fp-dropdown';
+    dropdown.hidden = true;
+
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.className = 'fp-search';
+    searchInput.placeholder = 'Schrift suchen…';
+    dropdown.appendChild(searchInput);
+
+    const listWrap = document.createElement('div');
+    listWrap.className = 'fp-list-wrap';
+    const list = document.createElement('ul');
+    list.className = 'fp-list';
+    listWrap.appendChild(list);
+    dropdown.appendChild(listWrap);
+    wrapper.appendChild(dropdown);
+
+    function refreshTrigger() {
+      const f = GOOGLE_FONTS.find(f => f.css === input.value);
+      nameSpan.textContent = f ? f.name : input.value.split(',')[0].replace(/'/g, '').trim();
+      nameSpan.style.fontFamily = input.value;
+      if (f && f.g) loadPreviewFont(f.g);
+    }
+
+    function renderList(filter) {
+      list.innerHTML = '';
+      const q = filter.trim().toLowerCase();
+      let lastCat = null;
+      let count = 0;
+      for (const font of GOOGLE_FONTS) {
+        if (q && !font.name.toLowerCase().includes(q) && !font.cat.toLowerCase().includes(q)) continue;
+        if (!q && font.cat !== lastCat) {
+          const catEl = document.createElement('li');
+          catEl.className = 'fp-cat';
+          catEl.textContent = font.cat;
+          list.appendChild(catEl);
+          lastCat = font.cat;
+        }
+        const li = document.createElement('li');
+        li.className = 'fp-item';
+        li.textContent = font.name;
+        if (input.value === font.css) li.classList.add('selected');
+        let hoverTimer;
+        li.addEventListener('mouseenter', () => {
+          clearTimeout(hoverTimer);
+          hoverTimer = setTimeout(() => {
+            if (font.g) {
+              loadPreviewFont(font.g);
+              setTimeout(() => { li.style.fontFamily = font.css; }, 80);
+            } else {
+              li.style.fontFamily = font.css;
+            }
+          }, 60);
+        });
+        li.addEventListener('mouseleave', () => clearTimeout(hoverTimer));
+        li.addEventListener('click', () => {
+          input.value = font.css;
+          refreshTrigger();
+          list.querySelectorAll('.fp-item.selected').forEach(el => el.classList.remove('selected'));
+          li.classList.add('selected');
+          closeDropdown();
+          update();
+        });
+        list.appendChild(li);
+        count++;
+      }
+      if (count === 0) {
+        const empty = document.createElement('li');
+        empty.className = 'fp-empty';
+        empty.textContent = 'Keine Schrift gefunden';
+        list.appendChild(empty);
+      }
+    }
+
+    function openDropdown() {
+      dropdown.hidden = false;
+      trigger.classList.add('open');
+      arrowSpan.textContent = '▴';
+      renderList('');
+      searchInput.value = '';
+      setTimeout(() => {
+        searchInput.focus();
+        const sel = list.querySelector('.fp-item.selected');
+        if (sel) sel.scrollIntoView({ block: 'nearest' });
+      }, 0);
+    }
+
+    function closeDropdown() {
+      dropdown.hidden = true;
+      trigger.classList.remove('open');
+      arrowSpan.textContent = '▾';
+    }
+
+    trigger.addEventListener('click', e => {
+      e.stopPropagation();
+      dropdown.hidden ? openDropdown() : closeDropdown();
+    });
+    searchInput.addEventListener('input', () => renderList(searchInput.value));
+    searchInput.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeDropdown(); trigger.focus(); }
+    });
+    document.addEventListener('click', e => {
+      if (!wrapper.contains(e.target)) closeDropdown();
+    });
+
+    wrapper._syncValue = refreshTrigger;
+    refreshTrigger();
+  }
+
   // ── State ──────────────────────────────────────────
   const DEFAULTS = {
     channel: '', delay: 5, maxMessages: 20,
@@ -1032,6 +1358,7 @@
       syncColorFromText('bg');
       syncColorFromText('text');
       syncColorFromText('name');
+      syncFontPickers();
     } catch(e) { console.warn('Could not load state', e); }
   }
 
@@ -1046,10 +1373,14 @@
     syncColorFromText('bg');
     syncColorFromText('text');
     syncColorFromText('name');
+    syncFontPickers();
     update();
   }
 
   // ── Init ──────────────────────────────────────────
+  initFontPicker('nameFontFamily');
+  initFontPicker('msgFontFamily');
+  loadPreviewFont('Inter');
   loadState();
   update();
 </script>
