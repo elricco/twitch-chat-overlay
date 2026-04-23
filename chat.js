@@ -121,13 +121,13 @@ function applyConfig() {
   root.style.setProperty('--msg-font-weight', msgV.weight);
   root.style.setProperty('--msg-font-style', msgV.style);
 
-  // Load Google Fonts for all active font families
-  loadGoogleFonts(CONFIG.fontFamily, nameFam, msgFam);
-
   root.style.setProperty('--name-bubble-bg',       '#' + CONFIG.nameBubbleColor);
   root.style.setProperty('--name-bubble-radius',   CONFIG.nameBubbleRadius + 'px');
   root.style.setProperty('--name-bubble-offset-x', CONFIG.nameBubbleOffsetX + 'px');
   root.style.setProperty('--name-bubble-offset-y', CONFIG.nameBubbleOffsetY + 'px');
+
+  // Load Google Fonts for all active font families
+  loadGoogleFonts(CONFIG.fontFamily, nameFam, msgFam);
 
   const container = document.getElementById('chat-container');
   if (container) {
