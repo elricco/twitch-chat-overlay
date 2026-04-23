@@ -1373,7 +1373,8 @@
     const bg = hexAlphaToRgba(get('bgColor') || '00000080');
     const tc = '#' + (get('textColor') || 'ffffff');
     const showAv = get('showAvatar');
-    const avSize = get('avatarSize') + 'px';
+    const rawAvSize = Number(get('avatarSize'));
+    const avSize = rawAvSize + 'px';
     const gap = get('messageGap') + 'px';
     const width = get('width') + 'px';
     const showBadges = get('showBadges');
@@ -1429,9 +1430,11 @@
         el.style.borderRadius = cr;
       }
 
+      const inNameBubble = isSplit && get('avatarPos') === 'in-name';
+      const thisAvSize = inNameBubble ? (rawAvSize * 0.75) + 'px' : avSize;
       avs[i].style.display = showAv ? 'block' : 'none';
-      avs[i].style.width   = avSize;
-      avs[i].style.height  = avSize;
+      avs[i].style.width   = thisAvSize;
+      avs[i].style.height  = thisAvSize;
       avs[i].src           = PREVIEW_AV;
 
       // Badges
