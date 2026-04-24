@@ -3,6 +3,7 @@
 ## v1.0.0
 
 Ein vollständig konfigurierbares Twitch-Chat-Overlay für OBS/Streamlabs.
+**DEMO**: https://elricco.github.io/twitch-chat-overlay/settings.html
 
 ## Features
 
