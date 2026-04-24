@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths: [README.md]
+  workflow_dispatch:
 
 jobs:
   release:
@@ -45,7 +46,7 @@ jobs:
 
   deploy:
     needs: release
-    if: needs.release.outputs.is_new == 'true'
+    if: needs.release.outputs.is_new == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       pages: write
