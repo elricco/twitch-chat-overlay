@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      is_new: ${{ steps.check.outputs.exists == 'false' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -39,3 +41,31 @@ jobs:
             chat.js
             settings.html
             README.md
+            LICENSE.md
+
+  deploy:
+    needs: release
+    if: needs.release.outputs.is_new == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare deploy files
+        run: |
+          mkdir -p _site
+          cp overlay.html chat.js settings.html README.md LICENSE.md _site/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
