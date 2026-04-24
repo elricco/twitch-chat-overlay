@@ -1,5 +1,7 @@
 # Twitch Chat Overlay
 
+## v1.0.0
+
 Ein vollständig konfigurierbares Twitch-Chat-Overlay für OBS/Streamlabs.
 
 ## Features
